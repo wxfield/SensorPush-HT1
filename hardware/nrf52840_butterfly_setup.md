@@ -445,7 +445,7 @@ from whad.ble import Sniffer
 from whad.device import WhadDevice
 
 # Target device MAC address (BLE BD_ADDR format)
-TARGET_MAC = "e0:c4:24:5f:2f:41"
+TARGET_MAC = "xx:xx:xx:xx:xx:xx"  # Replace with your HT1's BLE address
 
 # Connect to Butterfly dongle
 device = WhadDevice.create('uart0')
@@ -538,16 +538,16 @@ pip install whad
 
 ## Summary Checklist
 
-- [ ] Downloaded `butterfly-fwupgrade.zip` from GitHub releases v1.1.1
-- [ ] Installed `adafruit-nrfutil` and `whad` via pip3
-- [ ] Applied all 8 Python 3.13 compatibility patches
-- [ ] Put dongle in DFU mode (button pressed while plugging in)
-- [ ] Verified DFU mode: `Product: Open DFU Bootloader` in lsusb/dmesg
-- [ ] Flashed firmware: `adafruit-nrfutil dfu serial -pkg butterfly-fwupgrade.zip -p /dev/ttyACM0 -b 115200`
-- [ ] Saw "Device programmed." success message
-- [ ] Verified Butterfly firmware: `lsusb` shows `c0ff:eeee WHAD ButteRFly dongle`
-- [ ] Tested WHAD: `whadup` shows uart0 device
-- [ ] Created BLE sniffer script and tested packet capture
+- [x] Downloaded `butterfly-fwupgrade.zip` from GitHub releases v1.1.1
+- [x] Installed `adafruit-nrfutil` and `whad` via pip3
+- [x] Applied all 8 Python 3.13 compatibility patches
+- [x] Put dongle in DFU mode (button pressed while plugging in)
+- [x] Verified DFU mode: `Product: Open DFU Bootloader` in lsusb/dmesg
+- [x] Flashed firmware: `adafruit-nrfutil dfu serial -pkg butterfly-fwupgrade.zip -p /dev/ttyACM0 -b 115200`
+- [x] Saw "Device programmed." success message
+- [x] Verified Butterfly firmware: `lsusb` shows `c0ff:eeee WHAD ButteRFly dongle`
+- [x] Tested WHAD: `whadup` shows uart0 device
+- [x] Created BLE sniffer script and tested packet capture
 
 ---
 
