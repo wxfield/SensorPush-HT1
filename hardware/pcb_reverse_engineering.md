@@ -118,13 +118,7 @@ line to flash firmware before the board goes into the enclosure.
 
 The square pad marks pin 1. Probable pinout (verify with multimeter before connecting):
 
-```
-┌─────────┬─────────┐
-│ VCC (■) │  SWDIO  │
-├─────────┼─────────┤
-│   GND   │  SWDCLK │
-└─────────┴─────────┘
-```
+![SWD pad pinout](swd_pinout.svg)
 
 Verify with multimeter:
 - VCC pad → continuity to battery positive
@@ -166,9 +160,7 @@ may produce log output. A logic analyzer or USB-UART adapter is sufficient.
 On the battery side, below the alignment hole, is a 4-pad group:
 two larger flanking pads + two smaller inner pads.
 
-```
-[ GND (large) ] [ signal ] [ signal ] [ GND (large) ]
-```
+![Battery-side pad group](uart_pads.svg)
 
 The GND/signal/signal/GND layout is a classic UART test point pattern:
 `GND | TX | RX | GND`

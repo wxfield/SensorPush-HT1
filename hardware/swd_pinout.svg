@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="500" height="290" viewBox="0 0 500 290" font-family="Arial, Helvetica, sans-serif">
+
+  <!-- Title -->
+  <text x="16" y="24" font-size="14" font-weight="bold" fill="#111">SWD Debug Header — 2×2 Through-Hole Pads</text>
+  <text x="16" y="42" font-size="10" fill="#555">Top view · Component side · nRF51822 programming and debug interface</text>
+  <text x="16" y="57" font-size="10" fill="#888">Square-filled corner marks pin 1 (VCC) · Verify pinout with multimeter before connecting</text>
+
+  <!-- VCC pad (top-left) -->
+  <rect x="50"  y="70" width="170" height="75" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+  <!-- Square pad marker (solid filled corner) -->
+  <rect x="50"  y="70" width="18"  height="18" fill="#dc2626"/>
+  <text x="135" y="96"  font-size="12" font-weight="bold" fill="#7f1d1d" text-anchor="middle">VCC  (■ pin 1)</text>
+  <text x="135" y="113" font-size="10" fill="#7f1d1d" text-anchor="middle">3.3V supply</text>
+  <text x="135" y="131" font-size="9"  fill="#dc2626" text-anchor="middle">continuity → battery +</text>
+
+  <!-- SWDIO pad (top-right) -->
+  <rect x="260" y="70" width="170" height="75" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="345" y="96"  font-size="12" font-weight="bold" fill="#1e3a8a" text-anchor="middle">SWDIO</text>
+  <text x="345" y="113" font-size="10" fill="#1e3a8a" text-anchor="middle">Serial Wire Data I/O</text>
+  <text x="345" y="131" font-size="9"  fill="#2563eb" text-anchor="middle">nRF51822 pin 43</text>
+
+  <!-- GND pad (bottom-left) -->
+  <rect x="50"  y="175" width="170" height="75" fill="#f3f4f6" stroke="#6b7280" stroke-width="2"/>
+  <text x="135" y="201" font-size="12" font-weight="bold" fill="#374151" text-anchor="middle">GND</text>
+  <text x="135" y="218" font-size="10" fill="#374151" text-anchor="middle">Ground reference</text>
+  <text x="135" y="236" font-size="9"  fill="#6b7280" text-anchor="middle">continuity → battery −</text>
+
+  <!-- SWDCLK pad (bottom-right) -->
+  <rect x="260" y="175" width="170" height="75" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="345" y="201" font-size="12" font-weight="bold" fill="#1e3a8a" text-anchor="middle">SWDCLK</text>
+  <text x="345" y="218" font-size="10" fill="#1e3a8a" text-anchor="middle">Serial Wire Clock</text>
+  <text x="345" y="236" font-size="9"  fill="#2563eb" text-anchor="middle">nRF51822 pin 44</text>
+
+  <!-- Dividing lines between pad groups -->
+  <line x1="220" y1="82"  x2="260" y2="82"  stroke="#d1d5db" stroke-width="1" stroke-dasharray="4,3"/>
+  <line x1="220" y1="132" x2="260" y2="132" stroke="#d1d5db" stroke-width="1" stroke-dasharray="4,3"/>
+  <line x1="220" y1="187" x2="260" y2="187" stroke="#d1d5db" stroke-width="1" stroke-dasharray="4,3"/>
+  <line x1="220" y1="237" x2="260" y2="237" stroke="#d1d5db" stroke-width="1" stroke-dasharray="4,3"/>
+  <line x1="135" y1="145" x2="135" y2="175" stroke="#d1d5db" stroke-width="1" stroke-dasharray="4,3"/>
+  <line x1="345" y1="145" x2="345" y2="175" stroke="#d1d5db" stroke-width="1" stroke-dasharray="4,3"/>
+
+  <!-- Footer -->
+  <rect x="16" y="264" width="468" height="1" fill="#e5e7eb"/>
+  <text x="16" y="278" font-size="9" fill="#9ca3af">Through-hole pads accessible from both PCB faces · Solder 4-pin 2.54mm header or use pogo-pin jig</text>
+</svg>

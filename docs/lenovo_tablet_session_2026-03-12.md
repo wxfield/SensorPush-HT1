@@ -414,6 +414,8 @@ No other commands produced any notifications. The trigger command is precisely a
 
 ### Decoding the Notification Format
 
+![History notification packet diagram](packet_history_notification.svg)
+
 **Raw notification data (first few, 20 bytes each):**
 ```
 pkt 0:  e2 46 b3 69  6a e4 92 05  6b 04 93 05  6a 14 93 05  6d 24 93 05   |.F.ij...k...j...m$..|
@@ -458,6 +460,7 @@ pkt 2:  02 45 b3 69  69 a4 93 05  69 b4 93 05  6b d4 93 05  6c f4 93 05   |.E.ii
    final:  c6 77 ad 69  07 95 92 05  05 b5 92 01  ff ff ff ff  ff ff ff ff   |.w.i................|
            [-- ts ----] [-- rec 1 -] [-- rec 2 -] [sentinel---] [sentinel---]
    ```
+   ![End-of-history sentinel diagram](packet_sentinel.svg)
    Two records of real data, then two sentinel values. Download complete.
 
 **Validation of decode:**
@@ -527,31 +530,12 @@ The script:
 | 4 | Stop when `0xFFFFFFFF` appears in data bytes |
 
 **Notification format (20 bytes):**
-```
-  offset  len   type        description
-  ------  ----  ----------  -------------------------------------------
-   0- 3    4    uint32 LE   Unix timestamp (oldest record in this batch)
-   4- 7    4    Si7021      Record 1  (T + 0s)
-   8-11    4    Si7021      Record 2  (T + 60s)
-  12-15    4    Si7021      Record 3  (T + 120s)
-  16-19    4    Si7021      Record 4  (T + 180s)
-```
+
+![History notification packet diagram](packet_history_notification.svg)
 
 **Record format (4 bytes, Si7021 packing):**
-```
-  byte  bits    field               notes
-  ----  ------  ------------------  --------------------------------
-    0   [7:0]   humidity[7:0]       low 8 bits of 12-bit hum_raw
-    1   [3:0]   humidity[11:8]      high 4 bits of hum_raw
-    1   [7:4]   temperature[3:0]    low 4 bits of 14-bit temp_raw
-    2   [7:0]   temperature[11:4]   middle 8 bits of temp_raw
-    3   [1:0]   temperature[13:12]  high 2 bits of temp_raw
-    3   [6:2]   device type         1 = HT1
-    3   [7]     reserved
 
-  humidity_pct = max(0, min(100, -6.0 + 125.0 * hum_raw  / 4096.0))
-  temp_celsius =             -46.85 + 175.72 * temp_raw / 16384.0
-```
+![Si7021 record bit layout](packet_advertisement.svg)
 
 **Sentinel:** `0xFFFFFFFF` in any 4-byte record slot = no more records at that
 position or beyond in the current notification.

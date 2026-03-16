@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="560" height="210" viewBox="0 0 560 210" font-family="Arial, Helvetica, sans-serif">
+
+  <!-- Title -->
+  <text x="16" y="24" font-size="14" font-weight="bold" fill="#111">Battery-Side 4-Pad Group</text>
+  <text x="16" y="42" font-size="10" fill="#555">Bottom view · Probable UART (TX/RX) or alternate SWD access · Function unverified</text>
+
+  <!-- GND pad 1 (large, left) -->
+  <rect x="16"  y="58" width="110" height="90" fill="#f3f4f6" stroke="#6b7280" stroke-width="2"/>
+  <text x="71"  y="96"  font-size="12" font-weight="bold" fill="#374151" text-anchor="middle">GND</text>
+  <text x="71"  y="113" font-size="9"  fill="#6b7280" text-anchor="middle">(large pad)</text>
+
+  <!-- TX/Signal pad -->
+  <rect x="146" y="74" width="90"  height="58" fill="#fef9c3" stroke="#ca8a04" stroke-width="2"/>
+  <text x="191" y="99"  font-size="12" font-weight="bold" fill="#713f12" text-anchor="middle">TX ?</text>
+  <text x="191" y="116" font-size="9"  fill="#ca8a04" text-anchor="middle">or SWDIO</text>
+
+  <!-- RX/Signal pad -->
+  <rect x="256" y="74" width="90"  height="58" fill="#fef9c3" stroke="#ca8a04" stroke-width="2"/>
+  <text x="301" y="99"  font-size="12" font-weight="bold" fill="#713f12" text-anchor="middle">RX ?</text>
+  <text x="301" y="116" font-size="9"  fill="#ca8a04" text-anchor="middle">or SWDCLK</text>
+
+  <!-- GND pad 2 (large, right) -->
+  <rect x="366" y="58" width="110" height="90" fill="#f3f4f6" stroke="#6b7280" stroke-width="2"/>
+  <text x="421" y="96"  font-size="12" font-weight="bold" fill="#374151" text-anchor="middle">GND</text>
+  <text x="421" y="113" font-size="9"  fill="#6b7280" text-anchor="middle">(large pad)</text>
+
+  <!-- Pattern label -->
+  <text x="492" y="100" font-size="10" fill="#6b7280" text-anchor="middle">pattern:</text>
+  <text x="492" y="114" font-size="10" fill="#6b7280" text-anchor="middle">GND·sig·sig·GND</text>
+
+  <!-- Legend -->
+  <rect x="16" y="163" width="530" height="1" fill="#e5e7eb"/>
+
+  <rect x="16"  y="173" width="14" height="14" fill="#f3f4f6" stroke="#6b7280" stroke-width="1"/>
+  <text x="36"  y="184" font-size="10" fill="#374151">Ground (large pad — flanking)</text>
+
+  <rect x="250" y="173" width="14" height="14" fill="#fef9c3" stroke="#ca8a04" stroke-width="1"/>
+  <text x="270" y="184" font-size="10" fill="#374151">Signal (small pad — inner, function TBD)</text>
+
+  <text x="16" y="200" font-size="9" fill="#9ca3af">Probe inner pads at 115200 8N1 during power-on · Check continuity vs SWD header to distinguish UART from alternate SWD</text>
+
+</svg>
