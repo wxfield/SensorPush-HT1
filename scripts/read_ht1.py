@@ -16,7 +16,7 @@ Protocol Notes:
 Validated: 2026-03-08
   Our reading: 71.29°F / 34.01% RH
   SensorPush app: 71.8°F / 34% RH
-  Delta: ~0.5°F (expected — app gets fresh GATT read; we read cached advertisement)
+  Delta: ~0.5°F (expected ... app gets fresh GATT read; we read cached advertisement)
 
 Usage:
     python3 read_ht1.py                    # scan and print once

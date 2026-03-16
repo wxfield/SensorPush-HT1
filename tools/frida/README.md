@@ -1,4 +1,4 @@
-# Frida GATT Capture Scripts — Research Artifacts
+# Frida GATT Capture Scripts ... Research Artifacts
 
 These scripts were written on 2026-03-12 to intercept the SensorPush app's BLE GATT
 traffic on a rooted Lenovo Tab M8 (TB-8505F, Android 10). All three failed due to
@@ -11,7 +11,7 @@ They are preserved here as documentation of the approach taken and lessons learn
 ### gatt_capture_v1.js
 First attempt. Hooks `BluetoothGattCallback` abstract methods directly.
 **Failed:** Calling `return this.onCharacteristicRead(...)` on the abstract base
-class crashes the JVM — the abstract method has no implementation to dispatch to.
+class crashes the JVM ... the abstract method has no implementation to dispatch to.
 App crashed to home screen on inject.
 
 ### gatt_capture_v2.js
@@ -19,14 +19,14 @@ Fixed the abstract-method crash. Uses `Java.choose` to find live callback instan
 hooks only concrete `BluetoothGatt` methods (not abstract base), and hooks
 `BluetoothDevice.connectGatt` to intercept new connections.
 **Failed:** `BluetoothGatt.connect.implementation` triggered overload ambiguity:
-`"connect(): has more than one overload"` — crash at load time.
+`"connect(): has more than one overload"` ... crash at load time.
 
 ### gatt_capture_v3.js
 All hooks wrapped in try/catch. Explicit `.overload(...)` signatures on every method
 to avoid ambiguity. 3-arg and 4-arg `connectGatt` both covered. `Java.choose` for
 existing callback instances.
 **Failed:** DexProtector (`lib/arm64-v8a/libdexprotector.so`) detects the Frida
-runtime at native library constructor level — before any Java hooks execute.
+runtime at native library constructor level ... before any Java hooks execute.
 The app calls `exit()` immediately. No GATT data was ever captured.
 
 ### run_capture.py
@@ -80,4 +80,4 @@ DexProtector makes Frida-based GATT hooking impractical without significant
 additional work (embedding Frida gadget in APK + re-signing + integrity bypass patch).
 
 The HT1 GATT characteristics require no authentication. The protocol was ultimately
-discovered by connecting directly from macOS using `bleak` — see `../../scripts/ht1_probe.py`.
+discovered by connecting directly from macOS using `bleak` ... see `../../scripts/ht1_probe.py`.
