@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="480" viewBox="0 0 720 480" font-family="Arial, Helvetica, sans-serif">
+
+  <!-- Title -->
+  <text x="16" y="28" font-size="15" font-weight="bold" fill="#111">SensorPush HT1 — GATT History Notification Packet</text>
+  <text x="16" y="46" font-size="11" fill="#555">20 bytes · Characteristic ef09000a · Triggered by writing 0x01000000 to ef090009</text>
+
+  <!-- Bit ruler (bytes 0-3, 4-7, 8-11, 12-15, 16-19) -->
+  <text x="16"  y="68" font-size="10" fill="#888">Byte 0</text>
+  <text x="178" y="68" font-size="10" fill="#888">Byte 3</text>
+  <text x="214" y="68" font-size="10" fill="#888">Byte 4</text>
+  <text x="374" y="68" font-size="10" fill="#888">Byte 7</text>
+  <text x="411" y="68" font-size="10" fill="#888">Byte 8</text>
+  <text x="567" y="68" font-size="10" fill="#888">Byte 11</text>
+
+  <!-- ── Row 1: Timestamp ── -->
+  <rect x="16"  y="75" width="685" height="50" fill="#ede9fe" stroke="#7c3aed" stroke-width="1.5"/>
+  <text x="358" y="96"  font-size="12" font-weight="bold" fill="#4c1d95" text-anchor="middle">Bytes 0–3 · Unix Timestamp</text>
+  <text x="358" y="112" font-size="10" fill="#4c1d95" text-anchor="middle">uint32 little-endian · UTC epoch seconds · Timestamp of oldest record in this packet</text>
+
+  <!-- ── Row 2: Record 1 ── -->
+  <!-- sub-header label -->
+  <text x="16" y="144" font-size="10" fill="#888">Byte 4</text>
+  <text x="178" y="144" font-size="10" fill="#888">Byte 7</text>
+
+  <rect x="16"  y="148" width="685" height="50" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="358" y="169" font-size="12" font-weight="bold" fill="#1e3a8a" text-anchor="middle">Bytes 4–7 · Sensor Record 1</text>
+  <text x="358" y="185" font-size="10" fill="#1e3a8a" text-anchor="middle">Si7021-packed · timestamp + 0s · 4-byte Si7021 format (same as advertisement)</text>
+
+  <!-- ── Row 3: Record 2 ── -->
+  <text x="16" y="217" font-size="10" fill="#888">Byte 8</text>
+  <text x="172" y="217" font-size="10" fill="#888">Byte 11</text>
+
+  <rect x="16"  y="221" width="685" height="50" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="358" y="242" font-size="12" font-weight="bold" fill="#14532d" text-anchor="middle">Bytes 8–11 · Sensor Record 2</text>
+  <text x="358" y="258" font-size="10" fill="#14532d" text-anchor="middle">Si7021-packed · timestamp + 60s</text>
+
+  <!-- ── Row 4: Record 3 ── -->
+  <text x="16" y="290" font-size="10" fill="#888">Byte 12</text>
+  <text x="172" y="290" font-size="10" fill="#888">Byte 15</text>
+
+  <rect x="16"  y="294" width="685" height="50" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="358" y="315" font-size="12" font-weight="bold" fill="#14532d" text-anchor="middle">Bytes 12–15 · Sensor Record 3</text>
+  <text x="358" y="331" font-size="10" fill="#14532d" text-anchor="middle">Si7021-packed · timestamp + 120s</text>
+
+  <!-- ── Row 5: Record 4 ── -->
+  <text x="16" y="363" font-size="10" fill="#888">Byte 16</text>
+  <text x="172" y="363" font-size="10" fill="#888">Byte 19</text>
+
+  <rect x="16"  y="367" width="685" height="50" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="358" y="388" font-size="12" font-weight="bold" fill="#14532d" text-anchor="middle">Bytes 16–19 · Sensor Record 4</text>
+  <text x="358" y="404" font-size="10" fill="#14532d" text-anchor="middle">Si7021-packed · timestamp + 180s · 0xFFFFFFFF = end-of-history sentinel</text>
+
+  <!-- ── Legend / notes ── -->
+  <rect x="16" y="428" width="685" height="1" fill="#e5e7eb"/>
+
+  <!-- Legend items -->
+  <rect x="16"  y="438" width="14" height="14" fill="#ede9fe" stroke="#7c3aed" stroke-width="1"/>
+  <text x="36"  y="449" font-size="10" fill="#374151">Timestamp (uint32 LE)</text>
+
+  <rect x="170" y="438" width="14" height="14" fill="#dbeafe" stroke="#2563eb" stroke-width="1"/>
+  <text x="190" y="449" font-size="10" fill="#374151">Record 1 (timestamp + 0s)</text>
+
+  <rect x="360" y="438" width="14" height="14" fill="#dcfce7" stroke="#16a34a" stroke-width="1"/>
+  <text x="380" y="449" font-size="10" fill="#374151">Records 2–4 (+60s each)</text>
+
+  <text x="16" y="470" font-size="9" fill="#9ca3af">Packets delivered newest-first · Device stores ~3 weeks at 60s intervals · No auth required · Each Si7021 record = 4 bytes (see advertisement diagram)</text>
+
+</svg>
