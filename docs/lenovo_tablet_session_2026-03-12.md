@@ -425,15 +425,8 @@ pkt 2:  02 45 b3 69  69 a4 93 05  69 b4 93 05  6b d4 93 05  6c f4 93 05   |.E.ii
 ```
 
 **Structure:**
-```
-  offset  len   type        description
-  ------  ----  ----------  -------------------------------------------
-   0- 3    4    uint32 LE   Unix timestamp (oldest record in this batch)
-   4- 7    4    Si7021      Record 1  (T + 0s)
-   8-11    4    Si7021      Record 2  (T + 60s)
-  12-15    4    Si7021      Record 3  (T + 120s)
-  16-19    4    Si7021      Record 4  (T + 180s)
-```
+
+![Notification wire format](packet_notification_structure.svg)
 
 **Key observations:**
 
