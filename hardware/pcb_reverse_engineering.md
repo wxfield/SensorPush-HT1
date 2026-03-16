@@ -194,7 +194,7 @@ component alignment. No electrical function.
 
 ### What's Possible
 
-| Attack | Difficulty | What You'd Get |
+| Attack | Difficulty | What we might expect |
 |--------|-----------|----------------|
 | SWD firmware dump | Low | Full 256KB flash...all firmware, history storage format, all command parsers, unknown characteristic meanings |
 | UART console probe | Low | Possibly live debug log output during operation |
