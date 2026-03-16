@@ -1,6 +1,8 @@
 #!/bin/bash
 # Network Device Discovery - Before/After Comparison
 # Usage: Boot your device after the first scan, this finds new devices
+# I made this because my homelab is DHCP, and I was too lazy to commit static IPs.
+# This tool helps me locate an IP by doing a diff on a before::after IP sccan.
 
 NETWORK="192.168.0.0/24"  # Change to your network
 BEFORE_FILE="/tmp/nmap_before.txt"
