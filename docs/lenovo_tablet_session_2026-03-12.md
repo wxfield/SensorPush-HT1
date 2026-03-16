@@ -1,4 +1,4 @@
-# HT1 History Protocol ... Full Research Session Log
+# HT1 History Protocol...Full Research Session Log
 **Date:** March 12, 2026
 **Outcome:** ✅ History download protocol fully decoded and implemented
 **Duration:** ~8 hours
@@ -7,7 +7,7 @@
 
 ## Background
 
-As of March 8, 2026 we had cracked the HT1's **live sensor protocol** ... temperature and
+As of March 8, 2026 we had cracked the HT1's **live sensor protocol**...temperature and
 humidity readings are broadcast continuously in passive BLE advertisements, encoded in a
 4-byte Si7021 bit-packed format. That work is documented in `CONTINUATION.md`.
 
@@ -22,21 +22,21 @@ history download) to capture the GATT exchange, then decode the protocol.
 
 ---
 
-## Phase 1 ... Hardware Acquisition
+## Phase 1...Hardware Acquisition
 
-### Samsung Galaxy S6 SM-S906L ... Failed (previous session)
+### Samsung Galaxy S6 SM-S906L...Failed (previous session)
 
 A Samsung Galaxy S6 (SM-S906L, TracFone variant) had been set aside for this task. It
 failed completely before this session:
 
-- Permanently stuck on **Android 5.0.2 (API 21)** ... Samsung never released updates for
+- Permanently stuck on **Android 5.0.2 (API 21)**...Samsung never released updates for
   this carrier variant
 - The Beacon Thermometer app hard-blocks API 21 at startup via a **native library check**
   in a DexProtector-encrypted asset. Patching `minSdk` in the manifest bypasses install
   but the native runtime check still triggers immediately
 - The S6 was repurposed as a dashboard display; a replacement was ordered
 
-### Lenovo Tab M8 2nd Gen (TB-8505F) ... Arrived March 12
+### Lenovo Tab M8 2nd Gen (TB-8505F)...Arrived March 12
 
 - MediaTek MT6761 (ARM64), Android 10 (API 29), 2GB RAM, 32GB storage, Wi-Fi only
 - Cost: $44.95 (eBay)
@@ -55,7 +55,7 @@ initial sync. Basic setup: done.
 
 ---
 
-## Phase 2 ... HCI Snoop Log (Standard Approach) ... Failed
+## Phase 2...HCI Snoop Log (Standard Approach)...Failed
 
 ### What We Tried
 
@@ -64,11 +64,11 @@ The standard method for capturing BLE GATT traffic on Android is to enable the
 (including all GATT operations with data) to a file, which can be pulled and opened in
 Wireshark.
 
-**Step 1 ... Developer Options**
+**Step 1...Developer Options**
 Settings → About tablet → tap Build number 7× → Developer Options enabled.
 Then: Developer Options → Enable Bluetooth HCI snoop log → toggled ON.
 
-**Step 2 ... Verify the log path**
+**Step 2...Verify the log path**
 ```bash
 adb shell "find /sdcard /data/misc/bluetooth -name '*.log' 2>/dev/null"
 # Found: /data/misc/bluetooth/logs/btsnoop_hci.log
@@ -78,14 +78,14 @@ adb shell "find /sdcard /data/misc/bluetooth -name '*.log' 2>/dev/null"
 The file existed but was always 0 bytes. Pairing the HT1 and triggering a full history
 sync produced no data in the file.
 
-**Step 3 ... Force via system property**
+**Step 3...Force via system property**
 ```bash
 adb shell "su -c 'setprop persist.bluetooth.btsnooplogmode full'"
 adb shell "su -c 'setprop persist.bluetooth.btsnoopenable true'"
 ```
 Toggled BT off/on to restart the BT stack. File remained 0 bytes.
 
-**Step 4 ... bt_stack.conf modification**
+**Step 4...bt_stack.conf modification**
 Located the config file at `/etc/bluetooth/bt_stack.conf`. Appended:
 ```
 BtSnoopLogOutput=true
@@ -95,7 +95,7 @@ BtSnoopFileName=/data/misc/bluetooth/logs/btsnoop_hci.log
 The file is in the read-only system partition. Without root, it can't be modified.
 This led directly to the rooting effort.
 
-**Step 5 ... Magisk module overlay**
+**Step 5...Magisk module overlay**
 After rooting (see Phase 3), created a Magisk module that overlays the config:
 
 ```
@@ -123,17 +123,17 @@ mechanism only works on Qualcomm and some other BT controller implementations.
 
 ---
 
-## Phase 3 ... Rooting the Tablet
+## Phase 3...Rooting the Tablet
 
 With root confirmed necessary for the Magisk module approach (and later for Frida), we
 needed to root the TB-8505F.
 
-### ZUI Unlock Portal ... Failed
+### ZUI Unlock Portal...Failed
 
 Lenovo provides a bootloader unlock portal at `lenovomm.com`. Problems:
 
 1. The page is in Chinese/Japanese with no English version
-2. Requires an IMEI number ... this is a **Wi-Fi only** tablet with no IMEI
+2. Requires an IMEI number...this is a **Wi-Fi only** tablet with no IMEI
 3. Even with the serial number, the CDN URL for the unlock token returned 404:
    ```
    http://cdn.zui.lenovomm.com/developer/tabletboot/HA1MM6J4/sn.img  → 404
@@ -141,10 +141,10 @@ Lenovo provides a bootloader unlock portal at `lenovomm.com`. Problems:
 
 The official unlock path was completely blocked.
 
-### mtkclient ... MediaTek BROM Exploit (Success)
+### mtkclient...MediaTek BROM Exploit (Success)
 
 The TB-8505F uses the MediaTek MT6761 SoC, which is vulnerable to the **Kamakiri**
-exploit ... a BROM (BootROM) mode vulnerability that allows unsigned code execution
+exploit...a BROM (BootROM) mode vulnerability that allows unsigned code execution
 regardless of bootloader lock state. The `mtkclient` tool implements this exploit.
 
 **Installation:**
@@ -172,7 +172,7 @@ The exploit chain fires automatically once the device is detected in BROM mode:
 [*] Done. Device will reboot.
 ```
 
-On reboot, the bootloader displayed an "unlocked device" warning banner ... root access
+On reboot, the bootloader displayed an "unlocked device" warning banner...root access
 was now possible.
 
 **Installing Magisk:**
@@ -186,7 +186,7 @@ was now possible.
    ```bash
    sudo python3 mtk.py w boot /tmp/magisk_patched.img
    ```
-5. Reboot ... Magisk was installed and root access confirmed
+5. Reboot...Magisk was installed and root access confirmed
 
 **Note on rebooting after BROM mode:**
 The tablet does not auto-reboot after the mtkclient exploit. After writing the patched
@@ -195,7 +195,7 @@ force power off, then briefly press power to boot normally.
 
 ---
 
-## Phase 4 ... Frida Hooking ... Failed (Anti-Tamper)
+## Phase 4...Frida Hooking...Failed (Anti-Tamper)
 
 With root and Magisk established, the next approach was to hook the **Beacon Thermometer
 app** (`com.cousins_sears.beaconthermometer`) using Frida to intercept its `BluetoothGatt`
@@ -284,13 +284,13 @@ at runtime via a combination of checks:
 The core problem: DexProtector's detection runs as part of the native library constructor,
 before any Java code executes. By the time our Frida hooks were active, the detection
 had already been triggered. Embedding a Frida gadget in the APK would have the same
-problem ... DexProtector's integrity check would detect the modified library list.
+problem...DexProtector's integrity check would detect the modified library list.
 
 **Frida was a dead end against this app.**
 
 ---
 
-## Phase 5 ... Logcat Capture (Partial Success)
+## Phase 5...Logcat Capture (Partial Success)
 
 Even without Frida hooks, Android's `logcat` captures structured log output from apps
 and the Bluetooth framework itself. The BT framework (`BluetoothGatt` class) logs
@@ -342,15 +342,15 @@ Logcat told us:
 And critically: the `No credentials available` error meant the app **requires a
 SensorPush cloud account** to proceed with history download. Without logging into the
 app with valid credentials, it never sends the history download command. We would have
-needed to create a SensorPush account for the capture ... but even then, we'd only get
+needed to create a SensorPush account for the capture...but even then, we'd only get
 the logcat metadata, not the actual bytes.
 
-**Logcat was a partial success** ... it confirmed the service and characteristic UUIDs,
+**Logcat was a partial success**...it confirmed the service and characteristic UUIDs,
 and validated the GATT operation sequence. It could not capture protocol data.
 
 ---
 
-## Phase 6 ... Direct Mac BLE Probe (Success)
+## Phase 6...Direct Mac BLE Probe (Success)
 
 ### Pivot Insight
 
@@ -358,7 +358,7 @@ We had been treating the Android tablet as a necessary intermediary because we a
 1. The app was needed to authenticate with the HT1
 2. The HT1 might require a bonded device to allow GATT connections
 
-Both assumptions were wrong. The HT1 is an open GATT server ... any BLE central can
+Both assumptions were wrong. The HT1 is an open GATT server...any BLE central can
 connect to it without pairing or authentication.
 
 We already had a working `bleak`-based Python script (`read_ht1.py`) that connected to
@@ -395,7 +395,7 @@ async with BleakClient(address) as client:
 
 Note: `ef090009` is **write-only** (no read property). `ef09000a` is **notify + read**.
 
-### Probing ef090009 ... First Contact
+### Probing ef090009...First Contact
 
 We enabled notifications on `ef09000a`, then tried a series of write patterns on
 `ef090009`. The first command tried was the known SensorPush "standard trigger" pattern
@@ -477,7 +477,7 @@ Indoor room temperature, consistent across all records. Decode is correct.
 
 ---
 
-## Phase 7 ... Implementation
+## Phase 7...Implementation
 
 The working implementation is in `scripts/ht1_history.py`:
 
@@ -566,7 +566,7 @@ The Pixel series and most flagship Snapdragon phones work reliably.
 ### 2. DexProtector Makes Frida Essentially Unusable
 
 DexProtector is a commercial Android hardening product that detects dynamic analysis
-frameworks at the native library constructor level ... before any Java code, before Frida
+frameworks at the native library constructor level...before any Java code, before Frida
 has a chance to install hooks. Common bypass techniques (renaming the server binary,
 changing ports, gadget injection) all fail because DexProtector also checks code integrity.
 
@@ -584,7 +584,7 @@ The entire Android device chain (tablet → HCI snoop / Frida → capture protoc
 designed around the assumption that the HT1 requires some form of authentication or
 bonding before allowing GATT access to the reserved characteristics. It does not.
 
-Any BLE central ... including a Mac laptop ... can connect to the HT1 without pairing,
+Any BLE central...including a Mac laptop...can connect to the HT1 without pairing,
 discover all services, and interact with `ef090009`/`ef09000a` freely. In hindsight,
 we should have tried `write 0x01000000` directly from the Mac as the very first
 experiment, before any Android device work.
@@ -653,23 +653,23 @@ Time to success after pivoting to direct BLE: ~30 minutes
 The history download protocol is fully decoded and implemented. What the project could
 still benefit from:
 
-1. **MQTT integration for history data** ... push historical records to InfluxDB on
+1. **MQTT integration for history data**...push historical records to InfluxDB on
    first connection, then push only new records on subsequent connections (using
    `--since` flag with the timestamp of the last uploaded record)
 
-2. **Home Assistant custom integration** ... fork `Bluetooth-Devices/sensorpush-ble`,
+2. **Home Assistant custom integration**...fork `Bluetooth-Devices/sensorpush-ble`,
    add history download support as an optional periodic sync alongside the existing
    passive advertisement parser
 
-3. **Protocol publication** ... post the complete HT1 GATT protocol as a public
+3. **Protocol publication**...post the complete HT1 GATT protocol as a public
    reference; as of March 2026, no complete public documentation exists for the
    history download mechanism
 
-4. **Battery voltage formula verification** ... the formula `raw * 3.6 / 1024` was
+4. **Battery voltage formula verification**...the formula `raw * 3.6 / 1024` was
    derived from one data point (raw=792 → 2.77V). Collect additional points as
    the battery drains to confirm
 
-5. **ef090004 / ef090005 / ef090006 / ef09000b** ... characteristics still not
+5. **ef090004 / ef090005 / ef090006 / ef09000b**...characteristics still not
    fully understood; `ef090004` appears to be the sampling interval in seconds
    (read `0x3c` = 60), the others are unknown
 

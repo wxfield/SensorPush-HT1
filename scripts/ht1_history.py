@@ -104,7 +104,7 @@ def parse_notification(data: bytes, interval: int = 60) -> list[dict]:
         chunk = data[4 + i*4 : 4 + (i+1)*4]
         rec = decode_record(chunk)
         if rec is None:
-            break   # sentinel hit ... no more records
+            break   # sentinel hit...no more records
         ts = base_ts + i * interval
         rec["timestamp"]   = ts
         rec["datetime_utc"] = datetime.fromtimestamp(ts, tz=timezone.utc).isoformat()

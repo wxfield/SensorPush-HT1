@@ -1,6 +1,6 @@
 # SensorPush HT1 - BLE Protocol Reverse Engineering
 
-**Status:** ✅ COMPLETE ... Both live readings and full history download solved
+**Status:** ✅ COMPLETE...Both live readings and full history download solved
 **Last Updated:** 2026-03-12
 
 ---
@@ -11,7 +11,7 @@
 
 The SensorPush HT1 is a precision Bluetooth Low Energy temperature and humidity sensor
 built for real-world deployment. It records data every minute, stores 20 days of history
-on-board, and continuously broadcasts live readings in its BLE advertisements ... all from
+on-board, and continuously broadcasts live readings in its BLE advertisements...all from
 a coin cell battery rated for 1–2 years of typical use.
 
 **Technical specifications:**
@@ -38,37 +38,37 @@ piece of hardware, and it deserves to be recognized as such.
 Opening the enclosure reveals a textbook example of thoughtful embedded design packed
 into a coin-sized board:
 
-- **CR2477 battery** ... an unusually large coin cell for a device this size. The CR2477
+- **CR2477 battery**...an unusually large coin cell for a device this size. The CR2477
   has roughly 3× the capacity of the CR2032 used in most comparable sensors. Paired with
   the nRF51822's aggressive sleep modes, this translates to the 1–2 year battery life
-  advertised ... and often longer in practice. The engineers clearly prioritized longevity
+  advertised...and often longer in practice. The engineers clearly prioritized longevity
   over BOM cost, and they had the confidence to back it up with a spec sheet guarantee.
 
-- **PCB trace antenna** ... a full-perimeter ring trace tuned for 2.4 GHz. The RF
+- **PCB trace antenna**...a full-perimeter ring trace tuned for 2.4 GHz. The RF
   validation clearly went well: the two antenna matching network pads on the board edge
   are unpopulated, meaning the trace hit impedance spec without correction components.
   Getting that right the first time takes careful simulation and layout discipline. The
   100-meter line-of-sight range claim isn't marketing; the antenna earns it.
 
-- **SHT20 placement** ... the humidity sensor sits in a precision circular cutout in the
+- **SHT20 placement**...the humidity sensor sits in a precision circular cutout in the
   PCB that aligns directly with an ingress port in the enclosure. Ambient air reaches the
   sensor element unobstructed while the rest of the board stays isolated. This isn't an
-  afterthought ... it's a mechanical and electrical design decision made together, and it
+  afterthought...it's a mechanical and electrical design decision made together, and it
   shows in the ±3% accuracy figure.
 
-- **SWD pads ... through-hole, both sides** ... the 2×2 SWD debug header is through-hole
+- **SWD pads...through-hole, both sides**...the 2×2 SWD debug header is through-hole
   rather than SMD, accessible from both faces of the PCB. The production programming
   fixture doesn't need to flip the board. Small thing, faster line.
 
-- **nRF51822 SoC choice** ... ARM Cortex-M0 with integrated BLE radio, 256KB flash, 16KB
+- **nRF51822 SoC choice**...ARM Cortex-M0 with integrated BLE radio, 256KB flash, 16KB
   RAM. Exactly the right part for a coin-cell sensor: deep sleep current measured in
   microamps, sufficient flash for weeks of history at 1-minute intervals, and a mature
   Nordic SoftDevice BLE stack. No over-engineering, no wasted margin.
 
-- **Enclosure** ... plastic clip retention (no screws, no adhesive), a precise humidity
+- **Enclosure**...plastic clip retention (no screws, no adhesive), a precise humidity
   ingress port, and a lanyard loop for versatile mounting. It opens cleanly with a
   spudger and reassembles without complaint. The vent is even documented as
-  "ideally facing downward" for outdoor protected use ... this level of user-guidance
+  "ideally facing downward" for outdoor protected use...this level of user-guidance
   detail reflects the same care as the hardware.
 
 The HT1 is rated for use in freezers, refrigerators, attics, basements, wine cellars,
@@ -88,8 +88,8 @@ SensorPush was created by **Jonathan Cousins** and **James Nick Sears** of
 award-winning creative technology design and development studio.
 
 What makes Cousins & Sears unusual is the breadth of the team. Their combined expertise
-spans graphic design, software development, electrical engineering, and ... perhaps less
-obviously ... history and music. That wide range of knowledge shows in the HT1: the
+spans graphic design, software development, electrical engineering, and...perhaps less
+obviously...history and music. That wide range of knowledge shows in the HT1: the
 firmware is tight, the app is polished, the hardware is precise, and the whole product
 feels like it was made by people who actually use it. Which, by all accounts, they do.
 
@@ -97,7 +97,7 @@ In their own words: *"Everything from the sensor firmware to the apps themselves
 hand-crafted line by line. We believe the extra effort shows in the end result."*
 
 It does. The fact that a two-person Brooklyn studio produced a sensor competitive with
-far larger companies ... in accuracy, range, battery life, and industrial design ... is
+far larger companies...in accuracy, range, battery life, and industrial design...is
 genuinely impressive. Jonathan and James built something that belongs in a category with
 products that cost twice as much and are made by teams ten times the size.
 
@@ -131,7 +131,7 @@ python3 scripts/ht1_history.py --csv history.csv
 # History since a date
 python3 scripts/ht1_history.py --since 2026-03-10 --json out.json
 
-# Publish to MQTT ... broker on command line
+# Publish to MQTT...broker on command line
 python3 scripts/read_ht1.py --mqtt --mqtt-host mqtt.local --mqtt-topic home/ht1
 python3 scripts/ht1_history.py --mqtt --mqtt-host mqtt.local --mqtt-user admin --mqtt-pass secret
 
@@ -152,7 +152,7 @@ python3 scripts/ht1_history.py --mqtt --mqtt-host mqtt.local --mqtt-user admin -
 | Service UUID | `ef090000-11d6-42ba-93b8-9dd7ec090aa9` |
 | MAC (this device) | `XX:XX:XX:XX:XX:XX` |
 
-### Live Readings ... Advertisement Data
+### Live Readings...Advertisement Data
 
 The HT1 continuously broadcasts sensor data in its BLE advertisement payload.
 No connection or pairing needed.
@@ -168,7 +168,7 @@ temp_c   = round(-46.85 + 175.72 * temp_raw / 16384.0, 2)
 temp_f   = round(temp_c * 9/5 + 32, 2)
 ```
 
-### History Download ... GATT Protocol
+### History Download...GATT Protocol
 
 **Characteristics:**
 | UUID | Direction | Purpose |
@@ -185,7 +185,7 @@ temp_f   = round(temp_c * 9/5 + 32, 2)
 - Packets are delivered **newest-first** (timestamps decrease across packets)
 - `0xFFFFFFFF` in any record slot = end of history sentinel
 - Sensor stores approximately 3+ weeks of 1-minute readings
-- No authentication or pairing required ... any BLE central can issue the command
+- No authentication or pairing required...any BLE central can issue the command
 
 **Validated (2026-03-12):** Downloaded 5,656 records spanning March 8–12, 2026.
 
@@ -202,24 +202,24 @@ temp_f   = round(temp_c * 9/5 + 32, 2)
 
 ---
 
-## Research Journey ... How We Got Here
+## Research Journey...How We Got Here
 
 This took two dedicated sessions and more dead ends than expected.
 The full 8-hour Lenovo tablet session is documented in
 [`docs/lenovo_tablet_session_2026-03-12.md`](docs/lenovo_tablet_session_2026-03-12.md).
 
-### Phase 1 ... Direct GATT Connection, Wrong Formula (FAILED, early March 2026)
+### Phase 1...Direct GATT Connection, Wrong Formula (FAILED, early March 2026)
 
 First attempt: connect directly via Python `bleak`, read ef09000a, try to decode.
 
 **Result:** Connected successfully, read data, but temperature was off by 5.5°F.
-The decode formula was wrong ... we had no reference to validate against.
+The decode formula was wrong...we had no reference to validate against.
 
 **Files:** `scripts/ht1_direct_connection.py`
 
 ---
 
-### Phase 2 ... nRF52840 WHAD External Sniffer (FAILED)
+### Phase 2...nRF52840 WHAD External Sniffer (FAILED)
 
 Flashed a Taidacent nRF52840 dongle with Butterfly firmware, ran WHAD framework
 to sniff BLE traffic between iPhone and HT1.
@@ -234,12 +234,12 @@ can see them.
 
 ---
 
-### Phase 3 ... Android-x86 VM HCI Snoop (FAILED)
+### Phase 3...Android-x86 VM HCI Snoop (FAILED)
 
 Ran Android-x86 in a Proxmox VM with Bluetooth USB passthrough, enabled
 HCI snoop logging.
 
-**Result:** SensorPush app crashed immediately on launch ... "keeps stopping."
+**Result:** SensorPush app crashed immediately on launch..."keeps stopping."
 
 **Root cause:** SensorPush ships ARM-only native libraries.
 Android-x86 cannot execute ARM code; there's no runtime translation layer.
@@ -248,7 +248,7 @@ Android-x86 cannot execute ARM code; there's no runtime translation layer.
 
 ---
 
-### Phase 4 ... Raspberry Pi btmon (FAILED)
+### Phase 4...Raspberry Pi btmon (FAILED)
 
 Used `btmon` on a Raspberry Pi 3B+ running Kali Linux.
 
@@ -259,7 +259,7 @@ It cannot see what's happening between a phone and an external BLE device.
 
 ---
 
-### Phase 5 ... Samsung Galaxy S6 HCI Snoop (FAILED)
+### Phase 5...Samsung Galaxy S6 HCI Snoop (FAILED)
 
 Ordered a $49 Samsung Galaxy S6 specifically for HCI snoop capture.
 
@@ -275,9 +275,9 @@ but useless for this project.
 
 ---
 
-### Phase 6 ... Lenovo Tab M8 2nd Gen ... HCI Snoop Attempt (FAILED)
+### Phase 6...Lenovo Tab M8 2nd Gen...HCI Snoop Attempt (FAILED)
 
-Ordered a Lenovo TB-8505F (Android 10, API 29) ... above SensorPush's requirements.
+Ordered a Lenovo TB-8505F (Android 10, API 29)...above SensorPush's requirements.
 Enabled USB debugging, enabled Bluetooth HCI snoop log.
 
 **Result:** `btsnoop_hci.log` was created but was always **0 bytes** after pairing.
@@ -295,19 +295,19 @@ custom `bt_stack.conf` via Magisk overlay. None worked.
 
 ---
 
-### Phase 7 ... Root Lenovo Tab + Frida GATT Hooking (FAILED)
+### Phase 7...Root Lenovo Tab + Frida GATT Hooking (FAILED)
 
 Rooted the Lenovo via mtkclient Kamakiri BROM exploit (no fastboot required for MT6761).
 Flashed Magisk-patched boot.img, verified root.
 
-Installed frida-server 16.5.9 (arm64) ... had to downgrade from 17.x due to
+Installed frida-server 16.5.9 (arm64)...had to downgrade from 17.x due to
 `libart.so ANDROID_DLEXT_USE_NAMESPACE` crash on Android 10.
 
 Wrote three iterations of Frida scripts to hook Android's `BluetoothGatt` Java API:
-- `tools/frida/gatt_capture_v1.js` ... hooked abstract `BluetoothGattCallback` methods; crashed app
-- `tools/frida/gatt_capture_v2.js` ... fixed overload ambiguity; still crashed app
-- `tools/frida/gatt_capture_v3.js` ... all hooks in try/catch, explicit overloads; still crashed app
-- `tools/frida/run_capture.py` ... bypassed frida-tools CLI (Python 3.14 incompatibility bug)
+- `tools/frida/gatt_capture_v1.js`...hooked abstract `BluetoothGattCallback` methods; crashed app
+- `tools/frida/gatt_capture_v2.js`...fixed overload ambiguity; still crashed app
+- `tools/frida/gatt_capture_v3.js`...all hooks in try/catch, explicit overloads; still crashed app
+- `tools/frida/run_capture.py`...bypassed frida-tools CLI (Python 3.14 incompatibility bug)
 
 **Result:** App crashed to home screen every time Frida attached.
 
@@ -317,22 +317,22 @@ DexProtector detects the Frida runtime at native library constructor level ...
 *before* any Java hooks execute. It calls `exit()` immediately.
 
 Bypassing DexProtector would require embedding the Frida gadget into the APK
-and re-signing with a bypass patch ... a multi-day effort not worth pursuing
+and re-signing with a bypass patch...a multi-day effort not worth pursuing
 when the GATT characteristics are unauthenticated.
 
 **Frida version notes:**
-- frida-server 17.x crashes on Android 10 MT6761 ... use 16.5.9
+- frida-server 17.x crashes on Android 10 MT6761...use 16.5.9
 - frida-tools 12.5.0 has Python 3.14 incompatibility in `_is_java_available()`
 - Solution: bypass `frida-tools` CLI, use `frida` Python API directly
 - TCP transport more reliable than USB: `adb forward tcp:27042 tcp:27042`
 
 ---
 
-### Phase 8 ... Android Logcat BLE Filter (PARTIAL SUCCESS)
+### Phase 8...Android Logcat BLE Filter (PARTIAL SUCCESS)
 
 Filtered logcat for GATT-related tags on the rooted tablet.
 
-**Result:** Confirmed UUID activity ... saw `ef090009` and `ef09000a` in logcat
+**Result:** Confirmed UUID activity...saw `ef090009` and `ef09000a` in logcat
 as the app connected. But Android 10 strips raw characteristic data from
 system logs. Only the UUIDs appeared, not the actual bytes.
 
@@ -341,12 +341,12 @@ the characteristics we'd identified earlier.
 
 ---
 
-### Phase 9 ... Direct Mac BLE Probe (SUCCESS 🎉)
+### Phase 9...Direct Mac BLE Probe (SUCCESS 🎉)
 
 Key insight: the HT1 has **no authentication** on any GATT characteristic.
 The Android detour was entirely unnecessary.
 
-Wrote `scripts/ht1_probe.py` ... a bleak script that:
+Wrote `scripts/ht1_probe.py`...a bleak script that:
 1. Scans for HT1 by service UUID or name `"s"`
 2. Connects directly (no pairing)
 3. Enumerates all services and characteristics
@@ -364,7 +364,7 @@ newest-first ordering and 60-second record interval.
 
 ---
 
-### Phase 10 ... Implementation
+### Phase 10...Implementation
 
 Wrote `scripts/ht1_history.py` with full download, deduplication, sorting,
 and output to table/CSV/JSON/MQTT.
@@ -431,12 +431,12 @@ simultaneous live advertisement readings.
 |------|---------|
 | `scripts/read_ht1.py` | ✅ Live BLE advertisement reader + MQTT |
 | `scripts/ht1_history.py` | ✅ Full GATT history download |
-| `scripts/ht1_probe.py` | Discovery probe ... the script that cracked the protocol |
+| `scripts/ht1_probe.py` | Discovery probe...the script that cracked the protocol |
 | `scripts/ht1_direct_connection.py` | Early GATT attempt (wrong formula, kept for reference) |
 | `scripts/capture_ht1_whad_*.py` | WHAD sniffer failures (educational) |
-| `tools/frida/gatt_capture_v1.js` | Frida hook attempt 1 ... abstract callback crash |
-| `tools/frida/gatt_capture_v2.js` | Frida hook attempt 2 ... overload ambiguity fix |
-| `tools/frida/gatt_capture_v3.js` | Frida hook attempt 3 ... all try/catch (DexProtector still won) |
+| `tools/frida/gatt_capture_v1.js` | Frida hook attempt 1...abstract callback crash |
+| `tools/frida/gatt_capture_v2.js` | Frida hook attempt 2...overload ambiguity fix |
+| `tools/frida/gatt_capture_v3.js` | Frida hook attempt 3...all try/catch (DexProtector still won) |
 | `tools/frida/run_capture.py` | Frida Python API runner (bypassed frida-tools CLI bug) |
 | `docs/lenovo_tablet_session_2026-03-12.md` | Full 8-hour research session log |
 | `docs/android_hci_snoop_guide.md` | Android HCI snoop guide |
@@ -457,7 +457,7 @@ simultaneous live advertisement readings.
 | Frida GATT hooking | DexProtector detects Frida at native init, kills app before any Java hook fires |
 | Android logcat | Android 10 logs UUID activity but strips raw characteristic data |
 
-**The winning approach:** Direct BLE connection from Mac ... no pairing, no intermediary.
+**The winning approach:** Direct BLE connection from Mac...no pairing, no intermediary.
 
 ---
 
@@ -469,7 +469,7 @@ simultaneous live advertisement readings.
   push only records newer than last seen timestamp.
 - **Publish protocol spec:** No complete public documentation of HT1 GATT protocol
   existed as of March 2026. A GitHub gist or write-up would help the community.
-- **Unknown characteristics:** ef090005, ef090006, ef09000b ... purpose unknown.
+- **Unknown characteristics:** ef090005, ef090006, ef09000b...purpose unknown.
 
 ---
 
@@ -478,6 +478,6 @@ simultaneous live advertisement readings.
 - [Android HCI Logging](https://source.android.com/devices/bluetooth/verifying_debugging)
 - [mtkclient (Kamakiri exploit)](https://github.com/bkerler/mtkclient)
 - [Frida Documentation](https://frida.re/docs/)
-- [DexProtector](https://dexprotector.com/) ... commercial Android anti-tamper
+- [DexProtector](https://dexprotector.com/)...commercial Android anti-tamper
 - [bleak Python BLE](https://github.com/hbldh/bleak)
 - [WHAD Framework](https://github.com/whad-team/whad-client)

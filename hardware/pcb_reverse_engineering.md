@@ -1,13 +1,13 @@
-# SensorPush HT1 ... PCB & Hardware Reverse Engineering
+# SensorPush HT1...PCB & Hardware Reverse Engineering
 
 **Date examined:** 2026-03-12
-**Status:** Photographed and identified ... hardware hacking TBD
+**Status:** Photographed and identified...hardware hacking TBD
 
 ---
 
 ## Opening the Device
 
-The HT1 enclosure is held together by plastic clips ... no screws, no adhesive.
+The HT1 enclosure is held together by plastic clips...no screws, no adhesive.
 A spudger or fingernail at the seam near the battery compartment is sufficient.
 The PCB slides out cleanly.
 
@@ -15,7 +15,7 @@ The PCB slides out cleanly.
 
 ## Chip Identification
 
-### 1. nRF51822 ... Main SoC (BLE + Application Processor)
+### 1. nRF51822...Main SoC (BLE + Application Processor)
 
 ![nRF51822](photos/chip_nrf51822.png)
 
@@ -30,7 +30,7 @@ The PCB slides out cleanly.
 | BLE | Bluetooth Low Energy 4.x (integrated radio) |
 | Date code | `2118` = week 18 of 2021 |
 
-The nRF51822 is the heart of the device ... it runs the application firmware,
+The nRF51822 is the heart of the device...it runs the application firmware,
 drives the BLE SoftDevice stack, reads the SHT20 over I²C, stores history
 in internal flash, and manages the PCB trace antenna.
 
@@ -39,7 +39,7 @@ in internal flash, and manages the PCB trace antenna.
 
 ---
 
-### 2. SHT20 ... Temperature & Humidity Sensor
+### 2. SHT20...Temperature & Humidity Sensor
 
 ![SHT20](photos/chip_sht20.png)
 
@@ -69,7 +69,7 @@ ingress port in the enclosure, allowing ambient air to reach the sensor directly
 
 | Field | Value |
 |-------|-------|
-| Marking | `GC2` (partial ... chip oriented inverted in photo) |
+| Marking | `GC2` (partial...chip oriented inverted in photo) |
 | Function | LDO regulator / load switch |
 | Purpose | Regulates CR2477 battery voltage (3.0V nominal) to stable 1.8–3.3V for nRF51822 |
 
@@ -88,21 +88,21 @@ Known data point: `raw=63` → app displays ~2.8V.
 
 ![PCB component side](photos/pcb_component_side.jpg)
 
-- **nRF51822** ... center-top
-- **SHT20** ... bottom-right, inside circular humidity port cutout
-- **Power management IC** ... upper-left, near button
-- **PCB trace antenna** ... the circular ring trace around the entire board perimeter, tuned for 2.4 GHz
-- **Button** ... upper-left (user-accessible through enclosure)
-- **LED** ... small component upper-left area
-- **Passive components** ... 0402 resistors/capacitors throughout
+- **nRF51822**...center-top
+- **SHT20**...bottom-right, inside circular humidity port cutout
+- **Power management IC**...upper-left, near button
+- **PCB trace antenna**...the circular ring trace around the entire board perimeter, tuned for 2.4 GHz
+- **Button**...upper-left (user-accessible through enclosure)
+- **LED**...small component upper-left area
+- **Passive components**...0402 resistors/capacitors throughout
 
 ### Battery Side (back)
 
 ![PCB battery side](photos/pcb_battery_side.jpg)
 
-- **CR2477 battery spring contact** ... the large M-shaped spring clip dominates the back
-- **Two large gold pads** ... battery positive/negative contacts
-- **Debug/test pads** ... visible through-holes accessible from this side (see below)
+- **CR2477 battery spring contact**...the large M-shaped spring clip dominates the back
+- **Two large gold pads**...battery positive/negative contacts
+- **Debug/test pads**...visible through-holes accessible from this side (see below)
 
 ---
 
@@ -132,7 +132,7 @@ Verify with multimeter:
 - SWDIO → nRF51822 pin 43
 - SWDCLK → nRF51822 pin 44
 
-The pads are through-hole, accessible from **both sides of the PCB** ... convenient
+The pads are through-hole, accessible from **both sides of the PCB**...convenient
 for soldering a temporary 4-pin header or using a pogo-pin jig.
 
 ---
@@ -150,7 +150,7 @@ a **manufacturing test interface**. Likely provides:
 - Possibly a programming enable signal
 
 The large single through-hole adjacent to the test grid is a **mechanical
-alignment pin hole** ... used to register the PCB precisely in the production
+alignment pin hole**...used to register the PCB precisely in the production
 fixture so bed-of-nails contacts land on the test pads accurately.
 
 **Worth probing:** If a UART debug console was left active in production firmware,
@@ -174,7 +174,7 @@ The GND/signal/signal/GND layout is a classic UART test point pattern:
 `GND | TX | RX | GND`
 
 Alternatively this could be an alternate SWD access point from the battery
-side ... so the production fixture can flash without flipping the board.
+side...so the production fixture can flash without flipping the board.
 
 Probing the inner two pads for continuity against the SWD header on the
 component side will determine if they're the same pins (manufacturing
@@ -190,26 +190,26 @@ Two unpopulated 0402 footprints near the board edge are **antenna matching
 network** positions. These allow RF tuning of the PCB trace antenna by
 populating series/shunt components. The fact that they're unpopulated means
 the trace antenna hit impedance spec during RF validation without needing
-correction components ... a well-designed antenna.
+correction components...a well-designed antenna.
 
-The small dots scattered around the board are **fiducial marks** ... copper
+The small dots scattered around the board are **fiducial marks**...copper
 reference points used by the pick-and-place machine's vision system for
 component alignment. No electrical function.
 
 ---
 
-## Hardware Attack Surface ... Future Work
+## Hardware Attack Surface...Future Work
 
 ### What's Possible
 
 | Attack | Difficulty | What You'd Get |
 |--------|-----------|----------------|
-| SWD firmware dump | Low | Full 256KB flash ... all firmware, history storage format, all command parsers, unknown characteristic meanings |
+| SWD firmware dump | Low | Full 256KB flash...all firmware, history storage format, all command parsers, unknown characteristic meanings |
 | UART console probe | Low | Possibly live debug log output during operation |
 | SWD live debug | Medium | Step through firmware execution, inspect memory, watch history writes in real time |
 | Firmware disassembly | Medium-High | Complete understanding of all BLE commands, storage format, any hidden features |
 
-### Readback Protection ... Decision Tree
+### Readback Protection...Decision Tree
 
 The nRF51822 ships with readback protection **disabled** by default.
 SensorPush would need to have explicitly called `NRF_UICR->RBPCONF = 0x0000`
@@ -217,7 +217,7 @@ to enable it. There is no business reason for a consumer sensor to do this,
 and most production firmwares skip it.
 
 **Reading the chip is non-destructive.** The SWD read operation simply clocks
-data out over SWDIO/SWDCLK ... it cannot damage the device. The only physical
+data out over SWDIO/SWDCLK...it cannot damage the device. The only physical
 risk is mis-wiring (shorting a pad), which is avoided by verifying pinout with
 a multimeter before connecting power.
 
@@ -232,13 +232,13 @@ Follow this decision tree:
 - Whether dewpoint/VPD/heat index are computed on-device or by the app
 - Exact history storage format in flash (ring buffer? indexed? wear-leveled?)
 - Whether there are any undocumented BLE commands
-- The 60-second measurement interval ... is it configurable via a characteristic write?
+- The 60-second measurement interval...is it configurable via a characteristic write?
 
 ---
 
 ## Required Equipment
 
-### Option 1 ... ST-Link V2 Clone (~$8-15, recommended for getting started)
+### Option 1...ST-Link V2 Clone (~$8-15, recommended for getting started)
 
 Cheap Chinese clone of STMicroelectronics' ST-Link V2 debug probe.
 Works with OpenOCD and nrfjprog for nRF51 via SWD.
@@ -248,14 +248,14 @@ Works with OpenOCD and nrfjprog for nRF51 via SWD.
 - Guide: [nRF51822 flashing with ST-Link V2](https://forum.esk8.news/t/nrf51822-flashing-setup-in-windows-using-a-stlink-v2/30601)
 - macOS script: [nRF51822-OSX-ST_LINK_V2-Flasher-Script](https://github.com/ddavidebor/nRF51822-OSX-ST_LINK_V2-Flasher-Script)
 
-### Option 2 ... SEGGER J-Link EDU Mini (~$18, official, more reliable)
+### Option 2...SEGGER J-Link EDU Mini (~$18, official, more reliable)
 
 Official SEGGER debug probe, education/non-commercial use license.
-Best-in-class support for Nordic chips ... nrfjprog uses J-Link natively.
+Best-in-class support for Nordic chips...nrfjprog uses J-Link natively.
 
 - **Product page:** [segger.com/products/debug-probes/j-link/models/j-link-edu-mini/](https://www.segger.com/products/debug-probes/j-link/models/j-link-edu-mini/)
 - **US shop:** [shop-us.segger.com](https://shop-us.segger.com/product/j-link-edu-mini-8-08-91/)
-- Note: EDU license ... non-commercial personal use only
+- Note: EDU license...non-commercial personal use only
 
 ---
 
@@ -291,7 +291,7 @@ openocd -f interface/stlink.cfg -f target/nrf51.cfg
 ### Ghidra (firmware disassembly)
 
 NSA's free reverse engineering tool. ARM Cortex-M0 processor spec
-is built in ... load the firmware dump directly.
+is built in...load the firmware dump directly.
 
 - **Download:** [ghidra-sre.org](https://ghidra-sre.org)
 - Processor: `ARM Cortex` → `v6M` (Cortex-M0)
@@ -301,16 +301,16 @@ is built in ... load the firmware dump directly.
 
 ## Procedure When Revisiting
 
-1. **Verify pinout** ... multimeter continuity from SWD pads to battery contacts (VCC/GND) and nRF51822 pins 43/44 (SWDIO/SWDCLK)
-2. **Solder temporary header** ... 4-pin 2.54mm header into SWD through-holes, or use pogo pins
-3. **Connect programmer** ... ST-Link V2 or J-Link EDU Mini
-4. **Run nrfjprog --readback** ... check protection status before anything else
-5. **If unprotected:** `nrfjprog --readcode firmware.bin` ... done
-6. **Probe UART pads** ... logic analyzer on 10-pad grid and battery-side 4-pad group, 115200 8N1, during power-on
-7. **Load in Ghidra** ... ARM Cortex-M0, hunt for history storage and command parser
+1. **Verify pinout**...multimeter continuity from SWD pads to battery contacts (VCC/GND) and nRF51822 pins 43/44 (SWDIO/SWDCLK)
+2. **Solder temporary header**...4-pin 2.54mm header into SWD through-holes, or use pogo pins
+3. **Connect programmer**...ST-Link V2 or J-Link EDU Mini
+4. **Run nrfjprog --readback**...check protection status before anything else
+5. **If unprotected:** `nrfjprog --readcode firmware.bin`...done
+6. **Probe UART pads**...logic analyzer on 10-pad grid and battery-side 4-pad group, 115200 8N1, during power-on
+7. **Load in Ghidra**...ARM Cortex-M0, hunt for history storage and command parser
 
 ---
 
-*Photos taken 2026-03-12. Hardware hacking deferred ... BLE protocol already fully
+*Photos taken 2026-03-12. Hardware hacking deferred...BLE protocol already fully
 decoded via direct Mac BLE probe. SWD/UART work would provide deeper insight into
 storage internals and unknown characteristics (ef090005, ef090006, ef09000b).*

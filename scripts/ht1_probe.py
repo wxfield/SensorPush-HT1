@@ -100,7 +100,7 @@ async def probe(address):
             print(f"\n=== PROBING ef090009 COMMANDS ===", flush=True)
 
             # Known SensorPush read trigger = 0x01000000 (uint32 LE)
-            # ef090009/ef09000a are RESERVED ... probing common patterns
+            # ef090009/ef09000a are RESERVED...probing common patterns
             cmds = [
                 (b"\x01\x00\x00\x00",             "std-trigger"),
                 (b"\x00",                          "0x00"),
