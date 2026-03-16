@@ -7,51 +7,102 @@
 
 ## Overview
 
-![SensorPush HT1](hardware/photos/ht1_product.jpg)
+![SensorPush HT1](images/61UpdfJkpxL._SL1500_.jpg)
 
-The SensorPush HT1 is a compact Bluetooth Low Energy temperature and humidity sensor.
-It stores weeks of 1-minute readings internally and continuously broadcasts live sensor
-data in its BLE advertisements. SensorPush provides **no official BLE documentation**,
-requiring full protocol reverse engineering to access the data without their cloud.
+The SensorPush HT1 is a precision Bluetooth Low Energy temperature and humidity sensor
+built for real-world deployment. It records data every minute, stores 20 days of history
+on-board, and continuously broadcasts live readings in its BLE advertisements — all from
+a coin cell battery rated for 1–2 years of typical use.
 
-### On the Hardware Engineering
+**Technical specifications:**
+
+| Specification | Value |
+|--------------|-------|
+| Temperature range | -40°C to 60°C (-40°F to 140°F) |
+| Temperature accuracy | ±0.3°C / ±0.5°F typical · ±0.5°C / ±0.9°F max |
+| Humidity range | 0–100% RH |
+| Humidity accuracy | ±3% typical · ±4.5% max (at 25°C, 20–80% RH) |
+| Sampling interval | Every 60 seconds |
+| On-board storage | 20 days |
+| Battery | CR2477 (included, user-replaceable) |
+| Battery life | 1–2 years typical |
+| Wireless range | 100 m line-of-sight |
+| Dimensions | 40 × 40 × 16.5 mm (1.57" × 1.57" × 0.65") |
+| Weight | 40 g (1.4 oz) |
+
+### A Note on the Hardware Engineering
 
 Before getting into the reverse engineering: the HT1 is a genuinely well-engineered
-piece of hardware, and it's worth saying so.
+piece of hardware, and it deserves to be recognized as such.
 
 Opening the enclosure reveals a textbook example of thoughtful embedded design packed
 into a coin-sized board:
 
 - **CR2477 battery** — an unusually large coin cell for a device this size. The CR2477
   has roughly 3× the capacity of the CR2032 used in most comparable sensors. Paired with
-  the nRF51822's aggressive sleep modes, this translates to multi-year real-world battery
-  life. The engineers clearly prioritized longevity over BOM cost.
+  the nRF51822's aggressive sleep modes, this translates to the 1–2 year battery life
+  advertised — and often longer in practice. The engineers clearly prioritized longevity
+  over BOM cost, and they had the confidence to back it up with a spec sheet guarantee.
 
 - **PCB trace antenna** — a full-perimeter ring trace tuned for 2.4 GHz. The RF
   validation clearly went well: the two antenna matching network pads on the board edge
   are unpopulated, meaning the trace hit impedance spec without correction components.
-  Getting that right the first time takes careful simulation and layout discipline.
+  Getting that right the first time takes careful simulation and layout discipline. The
+  100-meter line-of-sight range claim isn't marketing; the antenna earns it.
 
 - **SHT20 placement** — the humidity sensor sits in a precision circular cutout in the
-  PCB that aligns directly with an ingress port in the enclosure. This lets ambient air
-  reach the sensor element unobstructed while keeping the rest of the board isolated.
-  It's a small detail that has a real impact on sensor accuracy and response time.
+  PCB that aligns directly with an ingress port in the enclosure. Ambient air reaches the
+  sensor element unobstructed while the rest of the board stays isolated. This isn't an
+  afterthought — it's a mechanical and electrical design decision made together, and it
+  shows in the ±3% accuracy figure.
 
 - **SWD pads — through-hole, both sides** — the 2×2 SWD debug header is through-hole
-  rather than SMD, accessible from both faces of the PCB. This means the production
-  programming fixture doesn't need to flip the board. Small thing, faster line.
+  rather than SMD, accessible from both faces of the PCB. The production programming
+  fixture doesn't need to flip the board. Small thing, faster line.
 
 - **nRF51822 SoC choice** — ARM Cortex-M0 with integrated BLE radio, 256KB flash, 16KB
-  RAM. Exactly the right part for a coin-cell sensor: low power, sufficient storage for
-  weeks of history at 1-minute intervals, and a mature BLE SoftDevice stack. No
-  over-engineering, no wasted margin.
+  RAM. Exactly the right part for a coin-cell sensor: deep sleep current measured in
+  microamps, sufficient flash for weeks of history at 1-minute intervals, and a mature
+  Nordic SoftDevice BLE stack. No over-engineering, no wasted margin.
 
-The enclosure design is equally considered — plastic clip retention (no screws, no
-adhesive), a generous humidity ingress port, and a lanyard loop for mounting flexibility.
-It opens cleanly with a spudger and goes back together without complaint.
+- **Enclosure** — plastic clip retention (no screws, no adhesive), a precise humidity
+  ingress port, and a lanyard loop for versatile mounting. It opens cleanly with a
+  spudger and reassembles without complaint. The vent is even documented as
+  "ideally facing downward" for outdoor protected use — this level of user-guidance
+  detail reflects the same care as the hardware.
+
+The HT1 is rated for use in freezers, refrigerators, attics, basements, wine cellars,
+greenhouses, reptile terrariums, guitar cases, cigar humidors, RVs, and chicken brooders.
+The -40°C floor and ±0.3°C typical accuracy make that list credible, not aspirational.
 
 The SensorPush HT1 is the product of people who knew what they were doing. Reverse
 engineering it was a pleasure precisely because the design is coherent and deliberate.
+Every decision has a reason. That's rarer than it should be.
+
+### The People Behind It
+
+![Jonathan Cousins and James Nick Sears](hardware/photos/founders.jpg)
+
+SensorPush was created by **Jonathan Cousins** and **James Nick Sears** of
+[Cousins & Sears Creative Technologists](https://cousinsandsears.com), a Brooklyn, NY-based
+award-winning creative technology design and development studio.
+
+What makes Cousins & Sears unusual is the breadth of the team. Their combined expertise
+spans graphic design, software development, electrical engineering, and — perhaps less
+obviously — history and music. That wide range of knowledge shows in the HT1: the
+firmware is tight, the app is polished, the hardware is precise, and the whole product
+feels like it was made by people who actually use it. Which, by all accounts, they do.
+
+In their own words: *"Everything from the sensor firmware to the apps themselves has been
+hand-crafted line by line. We believe the extra effort shows in the end result."*
+
+It does. The fact that a two-person Brooklyn studio produced a sensor competitive with
+far larger companies — in accuracy, range, battery life, and industrial design — is
+genuinely impressive. Jonathan and James built something that belongs in a category with
+products that cost twice as much and are made by teams ten times the size.
+
+The reverse engineering documented in this repository is a tribute to their work as much
+as anything else. A poorly engineered product is a chore to analyze. The HT1 was a joy.
 
 ---
 
