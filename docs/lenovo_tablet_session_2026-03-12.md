@@ -660,5 +660,3 @@ still benefit from:
 
 ---
 
-*Session conducted March 12, 2026. HT1 hardware serial: XX:XX:XX:XX:XX:XX (BT MAC).
-Research conducted with Claude Code assistance.*
