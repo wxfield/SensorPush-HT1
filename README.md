@@ -7,8 +7,53 @@
 
 ## Overview
 
-The SensorPush HT1 is a temperature/humidity sensor with BLE connectivity.
-SensorPush provides **no official BLE documentation**, requiring full reverse engineering.
+![SensorPush HT1](hardware/photos/ht1_product.jpg)
+
+The SensorPush HT1 is a compact Bluetooth Low Energy temperature and humidity sensor.
+It stores weeks of 1-minute readings internally and continuously broadcasts live sensor
+data in its BLE advertisements. SensorPush provides **no official BLE documentation**,
+requiring full protocol reverse engineering to access the data without their cloud.
+
+### On the Hardware Engineering
+
+Before getting into the reverse engineering: the HT1 is a genuinely well-engineered
+piece of hardware, and it's worth saying so.
+
+Opening the enclosure reveals a textbook example of thoughtful embedded design packed
+into a coin-sized board:
+
+- **CR2477 battery** — an unusually large coin cell for a device this size. The CR2477
+  has roughly 3× the capacity of the CR2032 used in most comparable sensors. Paired with
+  the nRF51822's aggressive sleep modes, this translates to multi-year real-world battery
+  life. The engineers clearly prioritized longevity over BOM cost.
+
+- **PCB trace antenna** — a full-perimeter ring trace tuned for 2.4 GHz. The RF
+  validation clearly went well: the two antenna matching network pads on the board edge
+  are unpopulated, meaning the trace hit impedance spec without correction components.
+  Getting that right the first time takes careful simulation and layout discipline.
+
+- **SHT20 placement** — the humidity sensor sits in a precision circular cutout in the
+  PCB that aligns directly with an ingress port in the enclosure. This lets ambient air
+  reach the sensor element unobstructed while keeping the rest of the board isolated.
+  It's a small detail that has a real impact on sensor accuracy and response time.
+
+- **SWD pads — through-hole, both sides** — the 2×2 SWD debug header is through-hole
+  rather than SMD, accessible from both faces of the PCB. This means the production
+  programming fixture doesn't need to flip the board. Small thing, faster line.
+
+- **nRF51822 SoC choice** — ARM Cortex-M0 with integrated BLE radio, 256KB flash, 16KB
+  RAM. Exactly the right part for a coin-cell sensor: low power, sufficient storage for
+  weeks of history at 1-minute intervals, and a mature BLE SoftDevice stack. No
+  over-engineering, no wasted margin.
+
+The enclosure design is equally considered — plastic clip retention (no screws, no
+adhesive), a generous humidity ingress port, and a lanyard loop for mounting flexibility.
+It opens cleanly with a spudger and goes back together without complaint.
+
+The SensorPush HT1 is the product of people who knew what they were doing. Reverse
+engineering it was a pleasure precisely because the design is coherent and deliberate.
+
+---
 
 **End result:** Two standalone Python scripts that give complete, cloud-free access:
 
