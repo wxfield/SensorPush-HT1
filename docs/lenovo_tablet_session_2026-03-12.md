@@ -414,11 +414,12 @@ No other commands produced any notifications. The trigger command is precisely a
 
 ### Decoding the Notification Format
 
-**Raw notification data (first few):**
+**Raw notification data (first few, 20 bytes each):**
 ```
-e246b369 6ae49205 6b049305 6a149305 6d249305   (20 bytes)
-f245b369 6b449305 6a549305 6a649305 6b849305
-0245b369 69a49305 69b49305 6bd49305 6cf49305
+pkt 0:  e2 46 b3 69  6a e4 92 05  6b 04 93 05  6a 14 93 05  6d 24 93 05   |.F.ij...k...j...m$..|
+pkt 1:  f2 45 b3 69  6b 44 93 05  6a 54 93 05  6a 64 93 05  6b 84 93 05   |.E.ikD..jT..jd..k...|
+pkt 2:  02 45 b3 69  69 a4 93 05  69 b4 93 05  6b d4 93 05  6c f4 93 05   |.E.ii...i...k...l...|
+        [-- ts ----] [-- rec 1 -] [-- rec 2 -] [-- rec 3 -] [-- rec 4 -]
 ```
 
 **Structure:**
