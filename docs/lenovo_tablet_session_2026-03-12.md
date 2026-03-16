@@ -424,11 +424,13 @@ pkt 2:  02 45 b3 69  69 a4 93 05  69 b4 93 05  6b d4 93 05  6c f4 93 05   |.E.ii
 
 **Structure:**
 ```
-Bytes  0- 3:  uint32 LE Unix timestamp  (oldest record in this batch)
-Bytes  4- 7:  Sensor record 1  (4 bytes, Si7021 packed)
-Bytes  8-11:  Sensor record 2
-Bytes 12-15:  Sensor record 3
-Bytes 16-19:  Sensor record 4
+  offset  len   type        description
+  ------  ----  ----------  -------------------------------------------
+   0- 3    4    uint32 LE   Unix timestamp (oldest record in this batch)
+   4- 7    4    Si7021      Record 1  (T + 0s)
+   8-11    4    Si7021      Record 2  (T + 60s)
+  12-15    4    Si7021      Record 3  (T + 120s)
+  16-19    4    Si7021      Record 4  (T + 180s)
 ```
 
 **Key observations:**
@@ -453,7 +455,8 @@ Bytes 16-19:  Sensor record 4
 4. **End-of-history sentinel:** When there are no more records, the data slots are
    filled with `0xFFFFFFFF`. The final notification was:
    ```
-   c677ad69 07959205 05b59201 ffffffff ffffffff
+   final:  c6 77 ad 69  07 95 92 05  05 b5 92 01  ff ff ff ff  ff ff ff ff   |.w.i................|
+           [-- ts ----] [-- rec 1 -] [-- rec 2 -] [sentinel---] [sentinel---]
    ```
    Two records of real data, then two sentinel values. Download complete.
 
@@ -525,25 +528,29 @@ The script:
 
 **Notification format (20 bytes):**
 ```
-[0:4]  uint32 LE  Unix timestamp of OLDEST record in this batch
-[4:8]  4 bytes    Record at (timestamp + 0 seconds)
-[8:12] 4 bytes    Record at (timestamp + 60 seconds)
-[12:16] 4 bytes   Record at (timestamp + 120 seconds)
-[16:20] 4 bytes   Record at (timestamp + 180 seconds)
+  offset  len   type        description
+  ------  ----  ----------  -------------------------------------------
+   0- 3    4    uint32 LE   Unix timestamp (oldest record in this batch)
+   4- 7    4    Si7021      Record 1  (T + 0s)
+   8-11    4    Si7021      Record 2  (T + 60s)
+  12-15    4    Si7021      Record 3  (T + 120s)
+  16-19    4    Si7021      Record 4  (T + 180s)
 ```
 
 **Record format (4 bytes, Si7021 packing):**
 ```
-byte0:       humidity bits [7:0]
-byte1[3:0]:  humidity bits [11:8]
-byte1[7:4]:  temperature bits [3:0]
-byte2:       temperature bits [11:4]
-byte3[1:0]:  temperature bits [13:12]
-byte3[6:2]:  device type (1 = HT1)
-byte3[7]:    reserved
+  byte  bits    field               notes
+  ----  ------  ------------------  --------------------------------
+    0   [7:0]   humidity[7:0]       low 8 bits of 12-bit hum_raw
+    1   [3:0]   humidity[11:8]      high 4 bits of hum_raw
+    1   [7:4]   temperature[3:0]    low 4 bits of 14-bit temp_raw
+    2   [7:0]   temperature[11:4]   middle 8 bits of temp_raw
+    3   [1:0]   temperature[13:12]  high 2 bits of temp_raw
+    3   [6:2]   device type         1 = HT1
+    3   [7]     reserved
 
-humidity_pct = max(0, min(100, -6.0 + 125.0 * hum_raw / 4096.0))
-temp_celsius = -46.85 + 175.72 * temp_raw / 16384.0
+  humidity_pct = max(0, min(100, -6.0 + 125.0 * hum_raw  / 4096.0))
+  temp_celsius =             -46.85 + 175.72 * temp_raw / 16384.0
 ```
 
 **Sentinel:** `0xFFFFFFFF` in any 4-byte record slot = no more records at that
