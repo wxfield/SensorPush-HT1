@@ -1,6 +1,6 @@
 # SensorPush HT1 - BLE Protocol Reverse Engineering
 
-**Status:** ✅ COMPLETE...Both live readings and full history download solved
+**Status:** Both direct live readings and full history download solved. No WiFi API/Gateway needed.
 **Last Updated:** 2026-03-12
 
 ---
