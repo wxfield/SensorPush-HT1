@@ -4,6 +4,8 @@
 </p>
 <strong><span style="color:red">STATUS:</span></strong> Both direct live readings and full history download solved. No WiFi API/Gateway needed.
 
+---
+
 | # | Data | Source | Status |
 |---|------|--------|--------|
 | 1 | Temperature (live) | BLE advertisement | ✅ Fully decoded |
