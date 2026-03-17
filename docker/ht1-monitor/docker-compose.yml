@@ -1,0 +1,31 @@
+# Add this service to your existing docker-compose.yml on debianbee
+# (at /home/wxfield/influxdb-telegraf/docker-compose.yml)
+#
+# Build the image first:
+#   cd /home/wxfield/influxdb-telegraf
+#   docker build -f ht1-monitor/Dockerfile -t ht1-monitor ../SensorPush-HT1
+#
+# Or copy this service block into your existing docker-compose.yml
+
+services:
+  ht1-monitor:
+    image: ht1-monitor
+    container_name: ht1-monitor
+    restart: unless-stopped
+    network_mode: host          # required for BlueZ BLE access on Linux
+    privileged: true            # required for D-Bus / BlueZ
+    volumes:
+      - /var/run/dbus:/var/run/dbus
+    environment:
+      HT1_MAC:           "E0:C4:24:5F:2F:41"
+      MQTT_HOST:         "192.168.1.188"
+      MQTT_PORT:         "1883"
+      MQTT_USER:         "admin"
+      MQTT_PASS:         "09wTc80!"
+      MQTT_TOPIC_PREFIX: "sensorpush"
+      INFLUX_URL:        "http://192.168.1.188:8086"
+      INFLUX_TOKEN:      "my-super-secret-auth-token"
+      INFLUX_ORG:        "home"
+      INFLUX_BUCKET:     "sensors"
+      SCAN_INTERVAL:     "60"
+      DIAG_HOUR:         "3"
