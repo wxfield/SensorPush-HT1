@@ -1,6 +1,6 @@
 # SensorPush HT1 - BLE Protocol Reverse Engineering
 <p align="center">
-  <img src="docs/ht1_workflow_3.jpg" width="720" alt="HT1 Workflow"/>
+  <img src="docs/ht1_workflow_3.jpg" width="900" alt="HT1 Workflow"/>
 </p>
 <strong><span style="color:red">STATUS:</span></strong> Both direct live readings and full history download solved. No WiFi API/Gateway needed.
 
