@@ -7,7 +7,9 @@
 
 ## Overview
 
-![SensorPush HT1](images/61UpdfJkpxL._SL1500_.jpg)
+<p align="center">
+    <img src="images/61UpdfJkpxL._SL1500_.jpg" width="200" alt="SensorPush HT1"/>
+</p>
 
 The SensorPush HT1 is a precision Bluetooth Low Energy temperature and humidity sensor
 built for real-world deployment. It records data every minute, stores 20 days of history
