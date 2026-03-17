@@ -8,7 +8,7 @@
 ## Overview
 
 <p align="center">
-    <img src="images/61UpdfJkpxL._SL1500_.jpg" width="300" alt="SensorPush HT1"/>
+    <img src="docs/HT1.jpg" width="400" alt="SensorPush HT1"/>
 </p>
 
 The SensorPush HT1 is a precision Bluetooth Low Energy temperature and humidity sensor
