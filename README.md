@@ -3,6 +3,19 @@
 **Status:** Both direct live readings and full history download solved. No WiFi API/Gateway needed.
 **Last Updated:** 2026-03-12
 
+| # | Data | Source | Status |
+|---|------|--------|--------|
+| 1 | Temperature (live) | BLE advertisement | ✅ Fully decoded |
+| 2 | Humidity (live) | BLE advertisement | ✅ Fully decoded |
+| 3 | Temperature (history) | GATT ef09000a notify | ✅ Fully decoded |
+| 4 | Humidity (history) | GATT ef09000a notify | ✅ Fully decoded |
+| 5 | Device ID | GATT ef090001 | ✅ Fully decoded |
+| 6 | Battery voltage | GATT ef090007 | ✅ Decoded (`raw × 3.6 / 1024`) |
+| 7 | Battery level % | GATT ef090003 | ⚠️ Readable, formula TBD |
+| 8 | Unknown | GATT ef090005 | ❌ Not yet decoded |
+| 9 | Unknown | GATT ef090006 | ❌ Not yet decoded |
+| 10 | Unknown notify | GATT ef09000b | ❌ Not yet decoded |
+
 ---
 
 ## Overview
