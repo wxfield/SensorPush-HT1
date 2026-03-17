@@ -2,8 +2,7 @@
 <p align="center">
   <img src="docs/ht1_workflow_2.png" width="720" alt="HT1 Workflow"/>
 </p>
-**Status:** Both direct live readings and full history download solved. No WiFi API/Gateway needed.
-**Last Updated:** 2026-03-12
+<strong><span style="color:red">STATUS:</span></strong> Both direct live readings and full history download solved. No WiFi API/Gateway needed.
 
 | # | Data | Source | Status |
 |---|------|--------|--------|
