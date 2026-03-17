@@ -81,22 +81,18 @@ Every decision has a reason. That's rarer than it should be.
 
 
 SensorPush was created by **Jonathan Cousins** and **James Nick Sears** of
-[Cousins & Sears Creative Technologists](https://cousinsandsears.com), a Brooklyn, NY-based
-award-winning creative technology design and development studio.
+[Cousins & Sears Creative Technologists](https://cousinsandsears.com), a small Brooklyn, NY-based
+studio with an unusually wide skill set...firmware, app development, electrical engineering,
+and a background in design that shows in every detail of the finished product.
 
-What makes Cousins & Sears unusual is the breadth of the team. Their combined expertise
-spans graphic design, software development, electrical engineering, and...perhaps less
-obviously...history and music. That wide range of knowledge shows in the HT1: the
-firmware is tight, the app is polished, the hardware is precise, and the whole product
-feels like it was made by people who actually use it. Which, by all accounts, they do.
+What stands out about the HT1 is that it feels deliberate at every level. The firmware is
+lean, the app is polished, and the hardware makes no wasted moves. That kind of coherence
+is hard to fake and harder to manufacture by committee. It comes from a small team that
+cared enough to get the details right.
 
-In their own words: *"Everything from the sensor firmware to the apps themselves has been
-hand-crafted line by line. We believe the extra effort shows in the end result."*
-
-It does. The fact that a two-person Brooklyn studio produced a sensor competitive with
-far larger companies...in accuracy, range, battery life, and industrial design...is
-genuinely impressive. Jonathan and James built something that belongs in a category with
-products that cost twice as much and are made by teams ten times the size.
+The fact that two people in Brooklyn built a sensor that competes...on accuracy, range,
+battery life, and build quality...with products from companies many times their size says
+everything about the quality of their work.
 
 The reverse engineering documented in this repository is a tribute to their work as much
 as anything else. A poorly engineered product is a chore to analyze. The HT1 was a joy.
