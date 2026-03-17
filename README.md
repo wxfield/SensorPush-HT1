@@ -83,7 +83,6 @@ Every decision has a reason. That's rarer than it should be.
 
 ### The People Behind It
 
-![Jonathan Cousins and James Nick Sears](images/founders.jpg)
 
 SensorPush was created by **Jonathan Cousins** and **James Nick Sears** of
 [Cousins & Sears Creative Technologists](https://cousinsandsears.com), a Brooklyn, NY-based
