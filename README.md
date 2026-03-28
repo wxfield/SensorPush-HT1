@@ -216,6 +216,22 @@ All 11 characteristics fully decoded via behavioral testing and client applicati
 | ef09000a | N/R | History data | 20-byte notifications: bytes 0–3 = uint32 LE base timestamp; bytes 4–19 = four Si7021-packed records, newest-first, +60 s each. `0xFFFFFFFF` = end sentinel. | — |
 | ef09000b | R/W | Humidity alarm thresholds | [uint16 LE hum\_low\_%, uint16 LE hum\_high\_%] integer %RH. Alarm fires when RH < low or RH > high on each 60 s cycle. | `05003700` = [5%, 55%] |
 
+#### Detailed Notes
+
+| UUID | Props | Status | Purpose | Notes |
+|------|-------|--------|---------|-------|
+| ef090001 | R | ✅ | Device ID | uint32 LE, 3 significant bytes. e.g. `2a050600` = 0x0006052A = 394538 |
+| ef090002 | R | ✅ | Hardware/protocol version | uint32 LE = 1; byte[0]=1 means HT1 gen1. Read-only (write rejected ATT Code 3). |
+| ef090003 | R | ✅ | TX Power | int8 signed. Factory `0xFC` = −4 dBm. `writeTxPower(4)` called on first activation (when timestamp == 0). Previously mislabeled "battery bar count" — corrected via client application analysis. |
+| ef090004 | R/W | ✅ | Measurement interval | uint16 LE, seconds. Factory `0x3C00` = 60s. Accepts 30, 60, 120. |
+| ef090005 | R/W | ✅ | BLE advertising interval | uint16 LE, 0.625ms slot units. Factory `0x0505` = 1285 slots = 803ms. Safe range: byte[1] 0–50 (up to ~8s). byte[1] ≥ 100 (~16s) causes BLE disconnection on next measurement cycle. Confirmed via behavioral testing and client application analysis. |
+| ef090006 | R/W | ✅ | Low alarm thresholds (raw) | [uint16 LE temp\_low\_raw, uint16 LE hum\_low\_raw] in Si7021 raw format. Factory `01000100` = both disabled (raw=1 ≈ −47°C / −6%RH, below any real reading). Alarm fires when sensor\_raw < threshold on 60s cycle. |
+| ef090007 | R | ✅ | Battery / die temp | [uint16 LE ADC\_raw, uint16 LE die\_temp\_raw]. Battery: `voltage = ADC_raw × 3.6 / 1024`. Die temp: same Si7021 formula as advertisement. |
+| ef090008 | R | ✅ | Last-seen timestamp | uint32 LE Unix timestamp. Updated each connection. = 0 on first activation (triggers `writeTxPower(4)` in app init chain). |
+| ef090009 | W | ✅ | History command | Write `0x01000000` (uint32 LE = 1) to start history download. |
+| ef09000a | N/R | ✅ | History data | 20-byte notifications. Bytes 0–3: uint32 LE timestamp of oldest record in batch. Bytes 4–19: four Si7021-packed sensor records, newest-first, +60s each. `0xFFFFFFFF` = end of history sentinel. |
+| ef09000b | R/W | ✅ | Humidity alarm thresholds (%RH) | [uint16 LE hum\_low%, uint16 LE hum\_high%] in integer %RH. Factory `05003700` = [5%, 55%]. Alarm fires when RH < low OR RH > high on 60s cycle. |
+
 ---
 
 ## Research Journey...How We Got Here
