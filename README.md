@@ -202,22 +202,6 @@ temp_f   = round(temp_c * 9/5 + 32, 2)
 
 All 11 characteristics fully decoded via behavioral testing and client application analysis.
 
-| UUID suffix | Props | Purpose | Encoding | Factory default |
-|-------------|-------|---------|----------|-----------------|
-| ef090001 | R | Device ID | uint32 LE (3 significant bytes) | unique per unit |
-| ef090002 | R | HW/protocol version | uint32 LE = 1; byte[0]=1 → HT1 gen1. Read-only. | `01000000` |
-| ef090003 | R | TX Power | int8 signed, dBm | `FC` = −4 dBm |
-| ef090004 | R/W | Measurement interval | uint16 LE, seconds | `3C00` = 60 s |
-| ef090005 | R/W | BLE advertising interval | uint16 LE, 0.625 ms slot units | `0505` = 803 ms |
-| ef090006 | R/W | Low alarm thresholds | [uint16 LE temp\_low\_raw, uint16 LE hum\_low\_raw] Si7021 raw. `0x0001` = disabled. Alarm fires when sensor\_raw < threshold on each 60 s cycle. | `01000100` |
-| ef090007 | R | Battery / die temp | [uint16 LE ADC\_raw, uint16 LE die\_temp\_raw]. Voltage: `raw × 3.6 / 1024`. Die temp: Si7021 formula. | — |
-| ef090008 | R | Last-seen timestamp | uint32 LE Unix timestamp. Updated each connection. 0 = first activation. | `00000000` |
-| ef090009 | W | History command | Write `0x01000000` (uint32 LE) to start download. | — |
-| ef09000a | N/R | History data | 20-byte notifications: bytes 0–3 = uint32 LE base timestamp; bytes 4–19 = four Si7021-packed records, newest-first, +60 s each. `0xFFFFFFFF` = end sentinel. | — |
-| ef09000b | R/W | Humidity alarm thresholds | [uint16 LE hum\_low\_%, uint16 LE hum\_high\_%] integer %RH. Alarm fires when RH < low or RH > high on each 60 s cycle. | `05003700` = [5%, 55%] |
-
-#### Detailed Notes
-
 | UUID | Props | Status | Purpose | Notes |
 |------|-------|--------|---------|-------|
 | ef090001 | R | ✅ | Device ID | uint32 LE, 3 significant bytes. e.g. `2a050600` = 0x0006052A = 394538 |
