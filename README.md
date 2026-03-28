@@ -2,7 +2,7 @@
 <p align="center">
   <img src="docs/ht1_workflow_3.jpg" width="900" alt="HT1 Workflow"/>
 </p>
-<strong><span style="color:red">STATUS:</span></strong> Both direct live readings and full history download solved. No WiFi API/Gateway needed.
+<strong><span style="color:red">STATUS:</span></strong> Live readings, full history download, and all GATT characteristics fully decoded. No WiFi API/Gateway needed.
 
 ---
 
@@ -14,10 +14,10 @@
 | 4 | Humidity (history) | GATT ef09000a notify | ✅ Fully decoded |
 | 5 | Device ID | GATT ef090001 | ✅ Fully decoded |
 | 6 | Battery voltage | GATT ef090007 | ✅ Decoded (`raw × 3.6 / 1024`) |
-| 7 | Battery level % | GATT ef090003 | ⚠️ Readable, formula TBD |
-| 8 | Unknown | GATT ef090005 | ❌ Not yet decoded |
-| 9 | Unknown | GATT ef090006 | ❌ Not yet decoded |
-| 10 | Unknown notify | GATT ef09000b | ❌ Not yet decoded |
+| 7 | TX Power | GATT ef090003 | ✅ Decoded — int8 signed, −4 dBm factory |
+| 8 | BLE advertising interval | GATT ef090005 | ✅ Decoded — uint16 LE, 0.625ms slot units |
+| 9 | Low alarm thresholds | GATT ef090006 | ✅ Decoded — temp + humidity, Si7021 raw |
+| 10 | Humidity alarm thresholds | GATT ef09000b | ✅ Decoded — integer %RH, low + high |
 
 ---
 
@@ -198,16 +198,23 @@ temp_f   = round(temp_c * 9/5 + 32, 2)
 
 **Validated (2026-03-12):** Downloaded 5,656 records spanning March 8–12, 2026.
 
-### Other GATT Characteristics
+### Complete GATT Characteristic Map
 
-| UUID | Purpose | Status |
-|------|---------|--------|
-| ef090001 | Device ID (uint24) | ✅ Decoded |
-| ef090003 | Battery level (%) | ✅ Readable, exact meaning TBD |
-| ef090007 | Battery ADC raw | ✅ formula: `raw * 3.6 / 1024` |
-| ef090005 | Unknown | Not yet decoded |
-| ef090006 | Unknown | Not yet decoded |
-| ef09000b | Unknown notify | Not yet decoded |
+All 11 characteristics fully decoded via behavioral testing and client application analysis.
+
+| UUID suffix | Props | Purpose | Encoding | Factory default |
+|-------------|-------|---------|----------|-----------------|
+| ef090001 | R | Device ID | uint32 LE (3 significant bytes) | unique per unit |
+| ef090002 | R | HW/protocol version | uint32 LE = 1; byte[0]=1 → HT1 gen1. Read-only. | `01000000` |
+| ef090003 | R | TX Power | int8 signed, dBm | `FC` = −4 dBm |
+| ef090004 | R/W | Measurement interval | uint16 LE, seconds | `3C00` = 60 s |
+| ef090005 | R/W | BLE advertising interval | uint16 LE, 0.625 ms slot units | `0505` = 803 ms |
+| ef090006 | R/W | Low alarm thresholds | [uint16 LE temp\_low\_raw, uint16 LE hum\_low\_raw] Si7021 raw. `0x0001` = disabled. Alarm fires when sensor\_raw < threshold on each 60 s cycle. | `01000100` |
+| ef090007 | R | Battery / die temp | [uint16 LE ADC\_raw, uint16 LE die\_temp\_raw]. Voltage: `raw × 3.6 / 1024`. Die temp: Si7021 formula. | — |
+| ef090008 | R | Last-seen timestamp | uint32 LE Unix timestamp. Updated each connection. 0 = first activation. | `00000000` |
+| ef090009 | W | History command | Write `0x01000000` (uint32 LE) to start download. | — |
+| ef09000a | N/R | History data | 20-byte notifications: bytes 0–3 = uint32 LE base timestamp; bytes 4–19 = four Si7021-packed records, newest-first, +60 s each. `0xFFFFFFFF` = end sentinel. | — |
+| ef09000b | R/W | Humidity alarm thresholds | [uint16 LE hum\_low\_%, uint16 LE hum\_high\_%] integer %RH. Alarm fires when RH < low or RH > high on each 60 s cycle. | `05003700` = [5%, 55%] |
 
 ---
 
@@ -473,12 +480,11 @@ simultaneous live advertisement readings.
 ## Future Work
 
 - **Home Assistant integration:** Fork `Bluetooth-Devices/sensorpush-ble` to add
-  history download, device ID, and battery reading. Publish as HACS custom component.
+  history download, device ID, TX power, and alarm threshold readback. Publish as HACS custom component.
 - **MQTT history bridge:** On first connect push all history; on subsequent connects
   push only records newer than last seen timestamp.
-- **Publish protocol spec:** No complete public documentation of HT1 GATT protocol
-  existed as of March 2026. A GitHub gist or write-up would help the community.
-- **Unknown characteristics:** ef090005, ef090006, ef09000b...purpose unknown.
+- **Alarm management script:** Read/write ef090006 and ef09000b to configure temperature
+  and humidity alarms from the command line without the SensorPush app.
 
 ---
 

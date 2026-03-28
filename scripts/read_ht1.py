@@ -100,34 +100,33 @@ def decode_ht1(mfg_data: bytes) -> dict | None:
 
 
 # =============================================================================
-# BATTERY (GATT)
+# GATT READS (device ID, TX power, battery voltage)
 # =============================================================================
 
 CHAR_DEVICE_ID       = "ef090001-11d6-42ba-93b8-9dd7ec090aa9"  # 4 bytes, [0:3] = device ID
-CHAR_BATTERY_LEVEL   = "ef090003-11d6-42ba-93b8-9dd7ec090aa9"  # 1 byte, 0-4 scale
-CHAR_BATTERY_VOLTAGE = "ef090007-11d6-42ba-93b8-9dd7ec090aa9"  # 4 bytes: uint16 rawVoltage + uint16 rawTemp
+CHAR_TX_POWER        = "ef090003-11d6-42ba-93b8-9dd7ec090aa9"  # 1 byte, int8 signed, dBm
+CHAR_BATTERY_VOLTAGE = "ef090007-11d6-42ba-93b8-9dd7ec090aa9"  # 4 bytes: uint16 ADC_raw + uint16 die_temp_raw
 
-# nRF52 SAADC formula: gain=1/6, reference=0.6V internal → 3.6V full-scale, 10-bit
-# Confirmed: raw=792 → 2.784V ≈ 2.8V (matches app display)
-# Source: reverse-engineered from APK CSSensor$19 + nRF52 SAADC datasheet
+# Battery voltage formula: ADC gain=1/6, reference=0.6V → 3.6V full-scale, 10-bit
+# Confirmed by behavioral testing and client application analysis
 def battery_voltage_from_raw(raw: int) -> float:
     return round(raw * 3.6 / 1024.0, 2)
 
 
 async def read_gatt_info(address: str, retries: int = 3) -> dict | None:
-    """Open a quick GATT connection to read device ID, battery level, and voltage."""
+    """Open a quick GATT connection to read device ID, TX power, and battery voltage."""
     for attempt in range(retries):
         try:
             async with BleakClient(address, timeout=15.0) as client:
                 await asyncio.sleep(1)
                 id_data      = await client.read_gatt_char(CHAR_DEVICE_ID)
-                level_data   = await client.read_gatt_char(CHAR_BATTERY_LEVEL)
+                tx_data      = await client.read_gatt_char(CHAR_TX_POWER)
                 voltage_data = await client.read_gatt_char(CHAR_BATTERY_VOLTAGE)
-                device_id   = int.from_bytes(id_data[0:3], "little")   # 24-bit LE
-                level       = level_data[0]                             # 0-4 bars
-                raw_voltage = int.from_bytes(voltage_data[0:2], "little") & 0x7FFF  # 15-bit raw ADC
-                voltage     = battery_voltage_from_raw(raw_voltage)
-                return {"device_id": device_id, "level": level, "level_max": 4,
+                device_id    = int.from_bytes(id_data[0:3], "little")       # 24-bit LE
+                tx_power_dbm = tx_data[0] if tx_data[0] < 128 else tx_data[0] - 256  # int8 signed
+                raw_voltage  = int.from_bytes(voltage_data[0:2], "little") & 0x7FFF  # 15-bit raw ADC
+                voltage      = battery_voltage_from_raw(raw_voltage)
+                return {"device_id": device_id, "tx_power_dbm": tx_power_dbm,
                         "raw_adc": raw_voltage, "voltage": voltage}
         except Exception as e:
             if attempt < retries - 1:
@@ -172,9 +171,9 @@ async def scan_once(timeout: float = 15.0) -> list[dict]:
     for reading in results.values():
         gatt = await read_gatt_info(reading["address"])
         if gatt:
-            reading["device_id"] = gatt["device_id"]
-            reading["battery"]   = {"level": gatt["level"], "level_max": gatt["level_max"],
-                                    "raw_adc": gatt["raw_adc"], "voltage": gatt["voltage"]}
+            reading["device_id"]    = gatt["device_id"]
+            reading["tx_power_dbm"] = gatt["tx_power_dbm"]
+            reading["battery"]      = {"raw_adc": gatt["raw_adc"], "voltage": gatt["voltage"]}
 
     return list(results.values())
 
@@ -201,7 +200,7 @@ def publish_mqtt(readings: list[dict]):
                 "temperature":    r["temp_f"],
                 "temperature_c":  r["temp_c"],
                 "humidity":       r["humidity"],
-                "battery_level":  batt.get("level"),
+                "tx_power_dbm":   r.get("tx_power_dbm"),
                 "battery_voltage": batt.get("voltage"),
                 "battery_adc":    batt.get("raw_adc"),
                 "timestamp":      r["timestamp"],
@@ -252,14 +251,17 @@ async def main():
                 if args.json:
                     print(json.dumps(r))
                 else:
-                    batt = r.get("battery")
-                    batt_str = f"{batt['level']}/{batt['level_max']} bars  {batt['voltage']}V  (raw={batt['raw_adc']})" if batt else "unavailable"
+                    batt     = r.get("battery")
+                    batt_str = f"{batt['voltage']}V  (raw={batt['raw_adc']})" if batt else "unavailable"
+                    tx_power = r.get("tx_power_dbm")
+                    tx_str   = f"{tx_power} dBm" if tx_power is not None else "unavailable"
                     dev_id   = r.get("device_id", "unavailable")
                     print(f"[{r['timestamp']}] {r['address']}")
                     print(f"  Device ID:   {dev_id}")
                     print(f"  Temperature: {r['temp_f']}°F ({r['temp_c']}°C)")
                     print(f"  Humidity:    {r['humidity']}%")
                     print(f"  Battery:     {batt_str}")
+                    print(f"  TX Power:    {tx_str}")
                     print(f"  RSSI:        {r['rssi']} dBm")
                     print(f"  Raw:         {r['raw_hex']}")
 
