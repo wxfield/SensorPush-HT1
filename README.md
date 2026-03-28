@@ -479,12 +479,19 @@ simultaneous live advertisement readings.
 
 ## Future Work
 
-- **Home Assistant integration:** Fork `Bluetooth-Devices/sensorpush-ble` to add
-  history download, device ID, TX power, and alarm threshold readback. Publish as HACS custom component.
+- **Standalone MQTT bridge container:** A Docker container running `read_ht1.py` and
+  `ht1_history.py` in continuous mode, publishing to any MQTT broker. Platform-agnostic —
+  works with Home Assistant (via the MQTT integration), Apple Home (via HomeKit MQTT bridge),
+  Node-RED, InfluxDB, or any other MQTT consumer. Avoids HA Bluetooth stack conflicts entirely
+  and works for users on any home automation platform.
 - **MQTT history bridge:** On first connect push all history; on subsequent connects
   push only records newer than last seen timestamp.
 - **Alarm management script:** Read/write ef090006 and ef09000b to configure temperature
   and humidity alarms from the command line without the SensorPush app.
+- **Home Assistant integration:** Fork `Bluetooth-Devices/sensorpush-ble` to add
+  history download, device ID, TX power, and alarm threshold readback. Publish as HACS
+  custom component. Note: requires investigation of HA Bluetooth GATT connection handling
+  before committing — HA's adapter management may conflict with active GATT sessions.
 
 ---
 
